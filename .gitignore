@@ -1,0 +1,127 @@
+# ====================================
+# DJANGO SPECIFIC
+# ====================================
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.venv/
+
+# Django specific
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Static files and media (keep structure, ignore content)
+/static/
+/staticfiles/
+/media/
+!/static/.gitkeep
+!/staticfiles/.gitkeep
+!/media/.gitkeep
+
+# Django migrations (keep initial, ignore auto-generated)
+*/migrations/__pycache__/
+*/migrations/*.pyc
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# ====================================
+# WORDPRESS SPECIFIC
+# ====================================
+
+# WordPress core files (keep only plugins/themes you customize)
+/wordpress/wp-admin/
+/wordpress/wp-includes/
+/wordpress/wp-content/languages/
+/wordpress/wp-content/upgrade/
+/wordpress/wp-content/uploads/
+/wordpress/*.php
+/wordpress/.htaccess
+/wordpress/license.txt
+/wordpress/readme.html
+/wordpress/wp-config-sample.php
+
+# Keep custom plugins and themes structure
+!/wordpress/wp-content/plugins/.gitkeep
+!/wordpress/wp-content/themes/.gitkeep
+!/wordpress/wp-content/mu-plugins/
+!/wordpress/wp-content/themes/custom-theme/
+!/wordpress/wp-content/plugins/custom-plugin/
+
+# WordPress uploads (keep structure)
+/wordpress/wp-content/uploads/
+!/wordpress/wp-content/uploads/.gitkeep
+
+# WordPress cache
+/wordpress/wp-content/cache/
+/wordpress/wp-content/w3tc-config/
+
+# ====================================
+# DOCKER & ENVIRONMENT
+# ====================================
+
+# Environment variables (keep .env.example)
+.env
+.env.local
+.env.production
+!.env.example
+!.env.template
+
+# Docker volumes and data
+/db_data/
+/mysql_data/
+/postgres_data/
+/redis_data/
+
+# Docker logs
+*.log
+
+# ====================================
+# DATABASES
+# ====================================
+
+# MySQL
+*.sql
+*.dump
+*.backup
+
+# SQLite
+*.sqlite
+*.sqlite3
+*.db
+
+# ====================================
+# LOGS
