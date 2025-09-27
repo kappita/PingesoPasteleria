@@ -39,56 +39,6 @@ services:
     networks:
       - wp_network
 
-  # Aplicación Django con venv
-  django_app:
-    build: 
-      context: .
-      dockerfile: Dockerfile
-    container_name: wp_django_backend
-    volumes:
-      - .:/app
-      - ./venv:/opt/venv
-    ports:
-      - "8001:8000"
-    environment:
-      - DEBUG=True
-      - DATABASE_URL=mysql://wordpress:wordpress@db:3306/wordpress
-      - DJANGO_SETTINGS_MODULE=django_app.settings
-      - PATH=/opt/venv/bin:$PATH
-    depends_on:
-      - db
-      - redis
-    networks:
-      - wp_network
-
-  # Redis para Celery
-  redis:
-    image: redis:7-alpine
-    container_name: wp_redis
-    ports:
-      - "6379:6379"
-    networks:
-      - wp_network
-
-  # Celery Worker
-  celery_worker:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: wp_celery_worker
-    volumes:
-      - .:/app
-      - ./venv:/opt/venv
-    environment:
-      - PATH=/opt/venv/bin:$PATH
-      - DATABASE_URL=mysql://wordpress:wordpress@db:3306/wordpress
-      - DJANGO_SETTINGS_MODULE=django_app.settings
-    command: celery -A django_app worker -l info
-    depends_on:
-      - db
-      - redis
-    networks:
-      - wp_network
 
   # phpMyAdmin
   phpmyadmin:
