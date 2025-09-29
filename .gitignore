@@ -54,8 +54,6 @@
 # DATABASES
 # ====================================
 
-# MySQL
-*.sql
 *.dump
 *.backup
 
