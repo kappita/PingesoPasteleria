@@ -1,0 +1,159 @@
+# Translation of Plugins - Content Control &#8211; The Ultimate Content Restriction Plugin! Restrict Content, Create Conditional Blocks &amp; More - Stable (latest release) in Spanish (Spain)
+# This file is distributed under the same license as the Plugins - Content Control &#8211; The Ultimate Content Restriction Plugin! Restrict Content, Create Conditional Blocks &amp; More - Stable (latest release) package.
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2024-01-30 13:41:27+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: GlotPress/4.0.1\n"
+"Language: es\n"
+"Project-Id-Version: Plugins - Content Control &#8211; The Ultimate Content Restriction Plugin! Restrict Content, Create Conditional Blocks &amp; More - Stable (latest release)\n"
+
+#. translators: %s: error message.
+#: classes/Controllers/Admin/Upgrades.php:283
+msgid "Some upgrades failed to complete: %s"
+msgstr "Algunas actualizaciones no se han completado: %s"
+
+#: classes/Upgrades/Restrictions_2.php:64
+msgid "No restrictions to migrate."
+msgstr "No hay restricciones para emigrar."
+
+#. Description of the plugin
+#: content-control.php
+msgid "Restrict content to logged in/out users or specific user roles. Restrict access to certain parts of a page/post. Control the visibility of widgets."
+msgstr "Restringe el contenido a usuarios conectados/desconectados o a perfiles de usuario específicos. Restringe el acceso a ciertas partes de una página/entrada. Controla la visibilidad de los widgets."
+
+#: classes/RuleEngine/Rules.php:194 dist/settings-page.js:3
+msgid "Content"
+msgstr "Contenido"
+
+#. Author of the plugin
+#: content-control.php
+msgid "Code Atlantic"
+msgstr "Code Atlantic"
+
+#: classes/Controllers/Admin/Reviews.php:512
+msgid "I already did"
+msgstr "Ya lo he hecho"
+
+#: classes/Controllers/Admin/Reviews.php:501
+msgid "Ok, you deserve it"
+msgstr "Vale, te lo mereces"
+
+#: classes/Controllers/Admin/Reviews.php:320
+msgid "3 months"
+msgstr "3 meses"
+
+#: classes/Controllers/Admin/Reviews.php:304
+msgid "1 month"
+msgstr "1 mes"
+
+#: classes/Controllers/Admin/Reviews.php:288
+msgid "1 week"
+msgstr "1 semana"
+
+#. Translators: 1. emoji, 2. html tag, 3. html tag, 4. the number of days, 5.
+#. html tag, 6. html tag.
+#: classes/Controllers/Admin/Reviews.php:278
+msgid "Hi there! %1$s You've been using the %2$sContent Control%3$s plugin on your site for %4$s now - We hope it's been helpful. If you're enjoying the plugin, would you mind rating it %5$s5-stars%6$s to help spread the word?"
+msgstr "¡Hola! %1$s Ya has estado usando el plugin %2$sContent Control%3$s en tu sitio durante %4$s - Esperamos que te haya sido útil. Si estás disfrutando del plugin, ¿te importaría valorarlo con %5$s5 estrellas%6$s para ayudar a hacer correr la voz?"
+
+#: classes/Controllers/Frontend/Restrictions/PostContent.php:146
+#: classes/Controllers/Frontend/Restrictions/PostContent.php:226
+#: classes/Models/Restriction.php:320 inc/functions/options.php:160
+msgid "This content is restricted."
+msgstr "Este contenido está restringido."
+
+#: classes/RuleEngine/Rules.php:455
+msgid "Default"
+msgstr "Por defecto"
+
+#: classes/Controllers/PostTypes.php:42 classes/Controllers/PostTypes.php:47
+#: dist/settings-page.js:5 dist/settings-page.js:40
+msgid "Restrictions"
+msgstr "Restricciones"
+
+#: classes/Controllers/Admin/WidgetEditor.php:74
+msgid "Who can see this widget?"
+msgstr "¿Quién puede ver este widget?"
+
+#: classes/RuleEngine/Rules.php:331
+msgid "A 404 Error Page"
+msgstr "Una página de error 404"
+
+#: classes/RuleEngine/Rules.php:321
+msgid "A Search Result Page"
+msgstr "Una página de resultados de búsqueda"
+
+#: classes/RuleEngine/Rules.php:311
+msgid "The Blog Index"
+msgstr "El índice del blog"
+
+#: classes/RuleEngine/Rules.php:301
+msgid "The Home Page"
+msgstr "La página de inicio"
+
+#. translators: %s: Taxonomy plural name
+#: classes/RuleEngine/Rules.php:625
+msgctxt "condition: taxonomy plural label ie. Category IDs"
+msgid "%s IDs: 128, 129"
+msgstr "ID de %s: 128, 129"
+
+#: classes/Controllers/Admin/WidgetEditor.php:86
+msgid "Choose which roles can see this widget"
+msgstr "Elige qué perfiles puede ver este widget"
+
+#: classes/RuleEngine/Rules.php:165
+msgid "Is Not"
+msgstr "No es"
+
+#. Plugin Name of the plugin
+#: content-control.php classes/Controllers/Admin/SettingsPage.php:41
+#: classes/Controllers/Admin/SettingsPage.php:42
+#: classes/Controllers/Admin/UserExperience.php:93
+#: classes/Plugin/License.php:478 classes/QueryMonitor/Collector.php:44
+#: classes/QueryMonitor/Output.php:49 classes/QueryMonitor/Output.php:92
+#: dist/settings-page.js:1 dist/settings-page.js:40
+msgid "Content Control"
+msgstr "Control del contenido"
+
+#. translators: %1$s: Post type singular name, %2$s: Taxonomy singular name
+#: classes/RuleEngine/Rules.php:527
+msgctxt "condition: post type plural and taxonomy singular label ie. A Post With Category"
+msgid "A %1$s with %2$s"
+msgstr "Una %1$s con %2$s"
+
+#. translators: %s: Taxonomy plural name
+#: classes/RuleEngine/Rules.php:621
+msgctxt "condition: taxonomy plural label ie. A Category with ID: Selected"
+msgid "A %s with ID"
+msgstr "Una %s con ID"
+
+#: classes/RuleEngine/Rules.php:164
+msgid "Is"
+msgstr "Es"
+
+#: vendor-prefixed/trustedlogin/client/src/Form.php:1312 dist/block-editor.js:1
+#: dist/components.js:1 dist/settings-page.js:5
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: vendor-prefixed/trustedlogin/client/src/Form.php:1311
+msgid "Close"
+msgstr "Cerrar"
+
+#: classes/Controllers/Admin/WidgetEditor.php:64 dist/settings-page.js:24
+msgid "Everyone"
+msgstr "Todos"
+
+#: classes/Controllers/Admin/WidgetEditor.php:65 dist/block-editor.js:7
+#: dist/settings-page.js:1
+msgid "Logged Out Users"
+msgstr "Usuarios desconectados"
+
+#: classes/Controllers/Admin/WidgetEditor.php:66 dist/block-editor.js:7
+#: dist/settings-page.js:1
+msgid "Logged In Users"
+msgstr "Usuarios conectados"
