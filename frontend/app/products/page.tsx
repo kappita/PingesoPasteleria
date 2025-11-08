@@ -1,4 +1,3 @@
-import Link from "next/link";
 import api from "../lib/woocommerce";
 import FiltersClient from "./FiltersClient";
 import ProductGrid from "./ProductGrid";
