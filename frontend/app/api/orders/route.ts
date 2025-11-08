@@ -9,6 +9,9 @@ export async function POST(req: Request) {
     return NextResponse.json(data);
   } catch (err: any) {
     console.error("❌ Error creando orden:", err);
-    return NextResponse.json({ error: "Error creando la orden" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Error creando la orden" },
+      { status: 500 }
+    );
   }
 }

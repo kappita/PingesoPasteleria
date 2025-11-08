@@ -2,13 +2,22 @@ import api from "../lib/woocommerce";
 import FiltersClient from "./FiltersClient";
 import ProductGrid from "./ProductGrid";
 
-export default async function ProductsPage(props: { searchParams: Promise<{ page?: string, category?: string, min_price?: string, max_price?: string }> }) {
+export default async function ProductsPage(props: {
+  searchParams: Promise<{
+    page?: string;
+    category?: string;
+    min_price?: string;
+    max_price?: string;
+  }>;
+}) {
   const searchParams = await props.searchParams;
   const currentPage = Number(searchParams.page) || 1;
   const perPage = 12;
 
   // Traer categorías desde WooCommerce
-  const { data: categories } = await api.get("products/categories", { per_page: 50 });
+  const { data: categories } = await api.get("products/categories", {
+    per_page: 50,
+  });
 
   // Armar filtros según searchParams
   const params: any = { per_page: perPage, page: currentPage };
@@ -29,7 +38,11 @@ export default async function ProductsPage(props: { searchParams: Promise<{ page
 
       {/* 🔹 Productos */}
       <section className="flex-1 p-6">
-        <ProductGrid products={products} currentPage={currentPage} totalPages={totalPages} />
+        <ProductGrid
+          products={products}
+          currentPage={currentPage}
+          totalPages={totalPages}
+        />
       </section>
     </main>
   );

@@ -1,4 +1,3 @@
-// app/woocommerce.lib.ts
 import WooCommerceRestApi from "@woocommerce/woocommerce-rest-api";
 
 const api = new WooCommerceRestApi({
