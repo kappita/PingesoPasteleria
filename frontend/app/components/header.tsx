@@ -11,13 +11,11 @@ const Header = () => {
   return (
     <>
       {/* Top Header con Logo centrado */}
-      <header className="bg-gradient-to-b from-orange-50 to-yellow-50 py-4">
+      <header className="py-4">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center">
-            {/* Espacio vacío izquierdo para balance */}
             <div className="w-24"></div>
 
-            {/* Logo centrado */}
             <div className="flex justify-center flex-1">
               <img 
                 src="/assets/logo.png"
@@ -26,7 +24,6 @@ const Header = () => {
               />
             </div>
 
-            {/* Iconos derecha */}
             <div className="flex items-center space-x-3">
               <a 
                 href="https://instagram.com" 
@@ -46,28 +43,19 @@ const Header = () => {
 
               <UserMenu />
 
-              {/* Mobile Menu Button */}
-              <button 
-                className="md:hidden text-gray-700 ml-2"
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-              >
-                <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              </button>
             </div>
           </div>
         </div>
       </header>
 
       {/* Navigation Bar Rosa */}
-      <nav className="bg-gradient-to-r from-pink-400 to-pink-500 shadow-md">
-        <div className="hidden md:flex justify-center items-center py-2 gap-16">
-          <Link href="/" className="flex items-center justify-center text-center text-white hover:text-pink-100 font-medium text-lg transition h-12 w-40">Inicio</Link>
-          <Link href="/products" className="flex items-center justify-center text-center text-white hover:text-pink-100 font-medium text-lg transition h-12 w-40">Tienda</Link>
-          <Link href="/us" className="flex items-center justify-center text-center text-white hover:text-pink-100 font-medium text-lg transition h-12 w-40">Nosotros</Link>
-          <Link href="/events" className="flex items-center justify-center text-center text-white hover:text-pink-100 font-medium text-lg transition h-12 w-40">Eventos</Link>
-          <Link href="/cards" className="flex items-center justify-center text-center text-white hover:text-pink-100 font-medium text-lg transition h-12 w-40">Cartas</Link>
+      <nav className="bg-[#E985A7] shadow-md">
+        <div className="hidden md:flex justify-center items-center py-1 gap-16 text-md">
+          <Link href="/" className="flex items-center justify-center text-center text-white hover:text-pink-100 font-medium transition h-12 w-40">Inicio</Link>
+          <Link href="/products" className="flex items-center justify-center text-center text-white hover:text-pink-100 font-medium transition h-12 w-40">Tienda</Link>
+          <Link href="/us" className="flex items-center justify-center text-center text-white hover:text-pink-100 font-medium transition h-12 w-40">Nosotros</Link>
+          <Link href="/events" className="flex items-center justify-center text-center text-white hover:text-pink-100 font-medium  transition h-8 w-40">Eventos</Link>
+          <Link href="/cards" className="flex items-center justify-center text-center text-white hover:text-pink-100 font-medium transition h-12 w-40">Cartas</Link>
         </div>
       </nav>
     </>
