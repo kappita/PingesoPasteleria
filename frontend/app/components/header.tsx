@@ -43,7 +43,7 @@ const Header = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
               </Link>
-              
+
               <UserMenu />
 
               {/* Mobile Menu Button */}
@@ -62,34 +62,12 @@ const Header = () => {
 
       {/* Navigation Bar Rosa */}
       <nav className="bg-gradient-to-r from-pink-400 to-pink-500 shadow-md">
-        <div className="container mx-auto px-4">
-          <div className="hidden md:flex justify-center items-center space-x-12 py-4">
-            <Link href="/products" className="text-white hover:text-pink-100 font-medium text-lg transition">Tienda</Link>
-            <Link href="/products" className="text-white hover:text-pink-100 font-medium text-lg transition">Tienda</Link>
-            <Link href="/us" className="text-white hover:text-pink-100 font-medium text-lg transition">Nosotros</Link>
-            <Link href="/events" className="text-white hover:text-pink-100 font-medium text-lg transition">Eventos</Link>
-            <Link href="/cards" className="text-white hover:text-pink-100 font-medium text-lg transition">Cartas</Link>
-            <Link href="/cart" className="relative hover:text-pink-600 transition"
-          title="Ver carrito"></Link>
-          </div>
-
-          {/* Mobile Menu */}
-          {isMenuOpen && (
-            <div className="md:hidden pb-4 pt-2">
-              <a href="#inicio" className="block py-2 px-4 text-white hover:bg-pink-600 rounded">
-                Inicio
-              </a>
-              <a href="#desayunos" className="block py-2 px-4 text-white hover:bg-pink-600 rounded">
-                Desayunos
-              </a>
-              <a href="#catering" className="block py-2 px-4 text-white hover:bg-pink-600 rounded">
-                Catering
-              </a>
-              <a href="#pasteleria" className="block py-2 px-4 text-white hover:bg-pink-600 rounded">
-                Pastelería
-              </a>
-            </div>
-          )}
+        <div className="hidden md:flex justify-center items-center py-2 gap-16">
+          <Link href="/" className="flex items-center justify-center text-center text-white hover:text-pink-100 font-medium text-lg transition h-12 w-40">Inicio</Link>
+          <Link href="/products" className="flex items-center justify-center text-center text-white hover:text-pink-100 font-medium text-lg transition h-12 w-40">Tienda</Link>
+          <Link href="/us" className="flex items-center justify-center text-center text-white hover:text-pink-100 font-medium text-lg transition h-12 w-40">Nosotros</Link>
+          <Link href="/events" className="flex items-center justify-center text-center text-white hover:text-pink-100 font-medium text-lg transition h-12 w-40">Eventos</Link>
+          <Link href="/cards" className="flex items-center justify-center text-center text-white hover:text-pink-100 font-medium text-lg transition h-12 w-40">Cartas</Link>
         </div>
       </nav>
     </>
