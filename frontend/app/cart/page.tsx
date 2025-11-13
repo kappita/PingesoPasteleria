@@ -1,11 +1,16 @@
 "use client";
 import Link from "next/link";
 import { useCart } from "../context/CartContext";
+import { useDeliveryAvailability } from "../hooks/useDeliveryAvailability";
 
 export default function CartPage() {
   const { cart, removeFromCart, clearCart, updateQuantity } = useCart();
+  const { data, getDailyRemaining, loading } = useDeliveryAvailability();
 
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+  if (loading) return <p>Cargando disponibilidad...</p>;
+  if (!data) return <p>No se pudo cargar disponibilidad</p>;
 
   return (
     <main className="max-w-4xl mx-auto p-6">
@@ -37,28 +42,43 @@ export default function CartPage() {
                       className="w-20 h-20 object-cover rounded-lg"
                     />
                   )}
+
+                  {/* Nombre, fecha, cupos y precio */}
                   <div>
                     <h2 className="font-semibold">{item.name}</h2>
+
+                    {/* Fecha seleccionada */}
+                    {item.deliveryDate ? (
+                      <p className="text-sm text-gray-700">
+                        📅 Entrega: <span className="font-medium">{item.deliveryDate}</span>
+                      </p>
+                    ) : (
+                      <p className="text-sm text-gray-500 italic">Sin fecha seleccionada</p>
+                    )}
+
+                    {/* Cupos globales */}
+                    <p className="text-sm text-gray-700">
+                      🌐 Cupos globales restantes:{" "}
+                      <span className="font-semibold">{data.global_remaining}</span>
+                    </p>
+
+                    {/* Cupos diarios (solo si hay fecha seleccionada) */}
+                    {item.deliveryDate && (
+                      <p className="text-sm text-gray-700">
+                        🧮 Cupos diarios disponibles para esta fecha:{" "}
+                        <span className="font-semibold">
+                          {getDailyRemaining(item.deliveryDate) ?? "N/D"}
+                        </span>
+                      </p>
+                    )}
+
+                    {/* Precio unitario */}
                     <p className="text-gray-600">${item.price}</p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <button
-                    onClick={() =>
-                      updateQuantity(item.id, Math.max(item.quantity - 1, 1))
-                    }
-                    className="px-3 py-1 border rounded hover:bg-gray-100"
-                  >
-                    −
-                  </button>
-                  <span>{item.quantity}</span>
-                  <button
-                    onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                    className="px-3 py-1 border rounded hover:bg-gray-100"
-                  >
-                    +
-                  </button>
+                  <span className="font-semibold">{item.quantity}</span>
                 </div>
 
                 <div className="text-right">

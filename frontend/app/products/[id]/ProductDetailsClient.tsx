@@ -1,13 +1,21 @@
 "use client";
 import { useCart } from "../../context/CartContext";
+import DeliveryDatePicker from "../../components/DeliveryDatePicker";
 import { useState, useEffect } from "react";
+import { useDeliveryAvailability } from "../../hooks/useDeliveryAvailability";
 
 export default function ProductDetailsClient({ product, variations }: any) {
   const [selectedAttrs, setSelectedAttrs] = useState<{ [key: string]: string }>({});
   const [currentVariation, setCurrentVariation] = useState<any>(null);
   const [quantity, setQuantity] = useState(1);
   const [message, setMessage] = useState<string | null>(null);
+  const [deliveryDate, setDeliveryDate] = useState<string>("");
+  const { data, getDailyRemaining, refresh } = useDeliveryAvailability();
   const { addToCart } = useCart();
+
+  useEffect(() => {
+    if (deliveryDate) refresh();
+  }, [deliveryDate]);
 
   // Actualiza la variación actual cuando cambian los selects
   useEffect(() => {
@@ -57,6 +65,7 @@ export default function ProductDetailsClient({ product, variations }: any) {
       quantity,
       image: item.image?.src || product.images[0]?.src,
       attributes: selectedAttrs,
+      deliveryDate: deliveryDate,
     });
 
     setMessage("✅ Producto añadido al carrito!");
@@ -107,8 +116,32 @@ export default function ProductDetailsClient({ product, variations }: any) {
           id="quantity"
           type="number"
           min="1"
+          max={
+            deliveryDate
+              ? Math.min(
+                  getDailyRemaining(deliveryDate) ?? 1,
+                  data?.global_remaining ?? 1
+                )
+              : 1
+          }
           value={quantity}
-          onChange={(e) => setQuantity(Number(e.target.value))}
+          onChange={(e) => {
+            const val = Number(e.target.value);
+            const maxVal =
+              deliveryDate
+                ? Math.min(
+                    getDailyRemaining(deliveryDate) ?? 1,
+                    data?.global_remaining ?? 1
+                  )
+                : 1;
+            if (val > maxVal) {
+              setMessage(`⚠️ Solo quedan ${maxVal} cupos disponibles`);
+              setQuantity(maxVal);
+            } else {
+              setQuantity(val);
+              setMessage(null);
+            }
+          }}
           className="border rounded-lg p-2 w-20 text-center"
         />
       </div>
@@ -118,12 +151,51 @@ export default function ProductDetailsClient({ product, variations }: any) {
         Precio total: ${ (parseFloat(currentPrice) * quantity).toFixed(2) }
       </p>
 
+
+      <DeliveryDatePicker
+        value={deliveryDate}
+        onChange={(d) => setDeliveryDate(d)}
+      />
+      {/* Mostrar cupos */}
+      {data && (
+        <div className="mt-3 text-sm text-gray-700">
+          <p>
+            🧮 Cupo global disponible:{" "}
+            <span className="font-semibold">{data.global_remaining}</span>
+          </p>
+
+          {deliveryDate && (
+            <p>
+              📅 Cupos diarios para {deliveryDate}:{" "}
+              <span className="font-semibold">
+                {getDailyRemaining(deliveryDate) ?? "Sin datos"}
+              </span>
+            </p>
+          )}
+        </div>
+      )}
+
       {/* Botón agregar al carrito */}
       <button
         onClick={handleAddToCart}
-        className="bg-pink-500 text-white px-6 py-3 rounded-xl hover:bg-pink-600"
+        disabled={
+          !deliveryDate || // no hay fecha seleccionada
+          (getDailyRemaining(deliveryDate) ?? 0) <= 0 || // sin cupos diarios
+          (data?.global_remaining ?? 0) <= 0 // sin cupos globales
+        }
+        className={`px-6 py-3 rounded-xl transition ${
+          !deliveryDate ||
+          (getDailyRemaining(deliveryDate) ?? 0) <= 0 ||
+          (data?.global_remaining ?? 0) <= 0
+            ? "bg-gray-300 cursor-not-allowed text-gray-600"
+            : "bg-pink-500 text-white hover:bg-pink-600"
+        }`}
       >
-        Agregar al carrito
+        {(!deliveryDate ||
+          (getDailyRemaining(deliveryDate) ?? 0) <= 0 ||
+          (data?.global_remaining ?? 0) <= 0)
+          ? "No disponible"
+          : "Agregar al carrito"}
       </button>
 
       {/* Mensaje de confirmación */}
