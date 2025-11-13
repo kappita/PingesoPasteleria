@@ -1,6 +1,6 @@
 import { GraphQLClient } from "graphql-request";
 
-const endpoint = process.env.WPGRAPHQL_URL!;
+const endpoint = process.env.WORDPRESS_URL! + "/graphql";
 
 // Cliente sin autorización
 export const client = new GraphQLClient(endpoint, {

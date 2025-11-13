@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { getViewer } from "@/app/lib/graphql/auth/viewer";
+import { getViewer } from "@/app/lib/graphql/queries/getViewer";
 
 export async function GET() {
   const cookiesStore = await cookies();
