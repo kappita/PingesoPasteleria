@@ -10,6 +10,7 @@ type CartItem = {
   image?: string;
   variation_id?: number;
   attributes?: { [key: string]: string };
+  deliveryDate: string,
 };
 
 type CartContextType = {

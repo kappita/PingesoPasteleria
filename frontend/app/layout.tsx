@@ -4,7 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { CartProvider } from "./context/CartContext";
 import Link from "next/link";
 import { ShoppingCart } from "lucide-react";
-import UserMenu from "./components/UserMenu";
+import Header from './components/header';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,36 +28,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es">
-      <body className="bg-gray-50 text-gray-900">
+      <body className="bg-[#FFF1DB] text-gray-900">
+        <Header />        
         <CartProvider>
-          <nav className="flex justify-between items-center p-4 bg-white shadow">
-            <h1 className="font-bold text-xl">Pastelería</h1>
-            <div className="flex gap-4">
-              <Link href="/" className="hover:underline">
-                Inicio
-              </Link>
-              <Link href="/products" className="hover:underline">
-                Tienda
-              </Link>
-              <Link href="/us" className="hover:underline">
-                Nosotros
-              </Link>
-              <Link href="/events" className="hover:underline">
-                Eventos
-              </Link>
-              <Link href="/cards" className="hover:underline">
-                Cartas
-              </Link>
-              <Link
-                href="/cart"
-                className="relative hover:text-pink-600 transition"
-                title="Ver carrito"
-              >
-                <ShoppingCart />
-              </Link>
-              <UserMenu />
-            </div>
-          </nav>
           {children}
         </CartProvider>
       </body>
