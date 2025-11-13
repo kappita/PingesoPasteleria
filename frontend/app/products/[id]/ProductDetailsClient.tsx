@@ -1,7 +1,9 @@
 "use client";
 import { useRouter } from 'next/navigation';
 import { useCart } from "../../context/CartContext";
+import DeliveryDatePicker from "../../components/DeliveryDatePicker";
 import { useState, useEffect } from "react";
+import { useDeliveryAvailability } from "../../hooks/useDeliveryAvailability";
 
 
 interface Product {
@@ -111,9 +113,15 @@ export default function ProductDetailsClient({ product, variations }: bruh) {
   const [currentVariation, setCurrentVariation] = useState<any>(null);
   const [quantity, setQuantity] = useState(1);
   const [message, setMessage] = useState<string | null>(null);
+  const [deliveryDate, setDeliveryDate] = useState<string>("");
+  const { data, getDailyRemaining, refresh } = useDeliveryAvailability();
   const { addToCart } = useCart();
   const router = useRouter();
 
+
+  useEffect(() => {
+    if (deliveryDate) refresh();
+  }, [deliveryDate]);
 
   // Actualiza la variación actual cuando cambian los selects
   useEffect(() => {
@@ -163,6 +171,7 @@ export default function ProductDetailsClient({ product, variations }: bruh) {
       quantity,
       image: item.image?.src || product.images[0]?.src,
       attributes: selectedAttrs,
+      deliveryDate: deliveryDate,
     });
 
     setMessage("✅ Producto añadido al carrito!");
@@ -243,7 +252,11 @@ export default function ProductDetailsClient({ product, variations }: bruh) {
         onClick={handleAddToCart}
         className="bg-transparent border-[#E985A7] border-2 text-[#E985A7] px-6 py-3 rounded-full w-[40%]"
       >
-        Agregar al carrito
+        {(!deliveryDate ||
+          (getDailyRemaining(deliveryDate) ?? 0) <= 0 ||
+          (data?.global_remaining ?? 0) <= 0)
+          ? "No disponible"
+          : "Agregar al carrito"}
       </button>
       <button
         onClick={handleBuyNow}
