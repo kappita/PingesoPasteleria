@@ -1,9 +1,25 @@
 import Link from "next/link";
 
+const catalogItems = [
+  {
+    name: "Coctelería Salada",
+    image: "/assets/cocteleria.jpg",
+  },
+  {
+    name: "Macarons",
+    image: "/assets/macarons.png",
+  },
+  {
+    name: "Queques",
+    image: "/assets/queque.png",
+    featured: true,
+  }
+];
+
 export default function HomePage() {
   return (
     <main className="min-h-screen flex flex-col items-center justify-center bg-[#FFF1DB]">
-      <section className="flex justify-center items-center relative -mt-80">
+      <section className="flex justify-center items-center relative mt-28">
         <div className="flex flex-col md:flex-row items-center w-full max-w-7xl mx-auto">
           <div className="flex-shrink-0 flex items-center justify-center w-[430px] h-[430px] relative z-10">
             <div className="overflow-hidden rounded-full w-[500px] h-[500px]">
@@ -36,8 +52,64 @@ export default function HomePage() {
             draggable={false}
           />
         </a>
+      </section>
 
 
+      <section className="py-28">
+        <h2 className="text-3xl md:text-4xl font-bold text-center mb-6 text-[#fbbb5b]">
+          Conoce nuestro catálogo
+        </h2>
+        <div className="grid gap-4 grid-cols-1 md:grid-cols-2 max-w-4xl mx-auto px-4">
+          <div className="flex flex-col gap-4">
+            <div className="relative aspect-[4/3] rounded-xl overflow-hidden">
+              <img
+                src={catalogItems[0].image}
+                alt={catalogItems[0].name}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute bottom-0 left-0 w-full px-4 pb-3 text-white text-lg font-semibold bg-gradient-to-t from-black/50 to-transparent">
+                {catalogItems[0].name}
+                <div className="border-t border-white/40 mt-1 w-full" />
+              </div>
+            </div>
+            {/* Tarjeta 4 */}
+            <div className="relative aspect-[4/2] rounded-xl overflow-hidden">
+              <img
+                src={catalogItems[1].image}
+                alt={catalogItems[1].name}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute bottom-0 left-0 w-full px-4 pb-3 text-white text-lg font-semibold bg-gradient-to-t from-black/40 to-transparent">
+                {catalogItems[1].name}
+                <div className="border-t border-white/40 mt-1 w-full" />
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col gap-4">
+            <div className="relative aspect-[4/2] rounded-xl overflow-hidden">
+              <img
+                src={catalogItems[1].image}
+                alt={catalogItems[1].name}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute bottom-0 left-0 w-full px-4 pb-3 text-white text-lg font-semibold bg-gradient-to-t from-black/40 to-transparent">
+                {catalogItems[1].name}
+                <div className="border-t border-white/40 mt-1 w-full" />
+              </div>
+            </div>
+            <div className="relative aspect-[4/3] rounded-xl overflow-hidden">
+              <img
+                src={catalogItems[2].image}
+                alt={catalogItems[2].name}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute bottom-0 left-0 w-full px-4 pb-3 text-white text-lg font-semibold bg-gradient-to-t from-black/40 to-transparent">
+                {catalogItems[2].name}
+                <div className="border-t border-white/40 mt-1 w-full" />
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
     </main>
   );
