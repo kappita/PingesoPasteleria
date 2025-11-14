@@ -1,6 +1,7 @@
 "use client";
 import { useRouter } from 'next/navigation';
 import { useCart } from "../../context/CartContext";
+import DeliveryDatePicker from "../../components/DeliveryDatePicker";
 import { useState, useEffect } from "react";
 import DeliveryDatePicker from "../../components/DeliveryDatePicker";
 import { useDeliveryAvailability } from '@/app/hooks/useDeliveryAvailability';
@@ -123,6 +124,10 @@ export default function ProductDetailsClient({ product, variations }: bruh) {
   }, [deliveryDate]);
 
 
+  useEffect(() => {
+    if (deliveryDate) refresh();
+  }, [deliveryDate]);
+
   // Actualiza la variación actual cuando cambian los selects
   useEffect(() => {
     if (product.type !== "variable") return;
@@ -194,7 +199,7 @@ export default function ProductDetailsClient({ product, variations }: bruh) {
   return (
     <div className="w-[85vw] mx-auto">
       {/* TODO: IMPLEMENTAR BREADCRUMBS PARA MANEJO DE CATEGORÍAS */}
-      <p>{`Productos > ${product.categories[0].name} > ${product.name}`}</p>
+      <p className="mb-4">{`Productos > ${product.categories[0].name} > ${product.name}`}</p>
       <div className="grid grid-cols-2">
         <img
           src={currentVariation?.image?.src || product.images[0]?.src}

@@ -5,6 +5,7 @@ import { CartProvider } from "./context/CartContext";
 import Link from "next/link";
 import { ShoppingCart } from "lucide-react";
 import Header from './components/header';
+import Footer from "./components/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,6 +34,7 @@ export default function RootLayout({
         <CartProvider>
           {children}
         </CartProvider>
+        <Footer />
       </body>
     </html>
   );

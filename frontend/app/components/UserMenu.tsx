@@ -32,7 +32,7 @@ export default function UserMenu() {
 
   return (
     <div className="relative" onClick={() => setOpen(!open)}>
-      <FaRegUserCircle className="h-10 w-10 cursor-pointer" />
+      <FaRegUserCircle className="h-8 w-8 cursor-pointer" />
 
       {open && (
         <div className="absolute right-0 mt-2 bg-white border-3 rounded-xl p-2 text-sm min-w-50">

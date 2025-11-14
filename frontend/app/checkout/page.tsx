@@ -1,11 +1,13 @@
 "use client";
 import { useCart } from "../context/CartContext";
-import { useState } from "react";
+import { useDeliveryAvailability } from "../hooks/useDeliveryAvailability";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { createHold, clearHold } from "../lib/wcpdd";
 
 export default function CheckoutPage() {
-  //const { cart } = useCart();
   const { cart, clearCart } = useCart();
+  const { data, loading: loadingAvailability, getDailyRemaining, refresh } = useDeliveryAvailability();
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
@@ -77,6 +79,44 @@ export default function CheckoutPage() {
     }
   };
 
+  useEffect(() => {
+  async function reserveSlots() {
+    try {
+      for (const item of cart) {
+        if (item.deliveryDate) {
+          await createHold(item.deliveryDate, item.quantity);
+        }
+      }
+      await refresh();
+      console.log("✅ Hold temporal creado");
+    } catch (err) {
+      console.error("Error creando hold temporal:", err);
+    }
+  }
+
+  async function releaseHold() {
+    try {
+      await clearHold();
+      console.log("🧹 Hold temporal liberado");
+      await refresh();
+    } catch (err) {
+      console.error("Error liberando hold:", err);
+    }
+  }
+
+  // Crear hold al entrar
+  if (cart.length > 0) reserveSlots();
+
+  // Liberar hold al salir o recargar la página
+  window.addEventListener("beforeunload", releaseHold);
+
+  return () => {
+    releaseHold(); // liberar si el componente se desmonta
+    window.removeEventListener("beforeunload", releaseHold);
+  };
+}, [cart, refresh]);
+
+
   return (
     <main className="p-8">
       <h1 className="text-3xl font-bold mb-4">Finalizar compra</h1>
@@ -136,6 +176,20 @@ export default function CheckoutPage() {
                 </div>
             </div>
             <div>
+
+              {loadingAvailability ? (
+                  <p className="text-gray-500 mb-4">Cargando disponibilidad global...</p>
+                ) : data ? (
+                  <div className="mb-6 p-4 border rounded-lg bg-gray-50">
+                    <h2 className="text-lg font-semibold mb-2">Disponibilidad de entrega</h2>
+                    <p className="text-gray-700">
+                      🌐 Cupos globales restantes:{" "}
+                      <span className="font-bold text-pink-600">{data.global_remaining}</span> / {data.global_capacity}
+                    </p>
+                  </div>
+                ) : (
+                  <p className="text-red-500 mb-4">No se pudo cargar la disponibilidad.</p>
+                )}
                 <h2 className="text-xl font-semibold mb-4">Tu pedido</h2>
 
                 <ul className="mb-6">
@@ -147,6 +201,17 @@ export default function CheckoutPage() {
                         <span className="text-gray-800">
                         {item.name} × {item.quantity}
                         </span>
+                        <p>Fecha de entrega : {item.deliveryDate}</p>
+
+                        {item.deliveryDate && (
+                          <p>
+                            📅 Cupos diarios para {item.deliveryDate}:{" "}
+                            <span className="font-semibold">
+                              {getDailyRemaining(item.deliveryDate) ?? "N/D"}
+                            </span>
+                          </p>
+                        )}
+
                         <span className="text-gray-700 font-medium">
                         ${(item.price * item.quantity).toFixed(2)}
                         </span>

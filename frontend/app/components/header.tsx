@@ -10,7 +10,6 @@ const Header = () => {
 
   return (
     <>
-      {/* Top Header con Logo centrado */}
       <header className="py-4">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center">
