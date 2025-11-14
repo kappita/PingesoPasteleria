@@ -74,6 +74,7 @@ export default function CartPage() {
 
                     {/* Precio unitario */}
                     <p className="text-gray-600">${item.price}</p>
+                    <p className="text-gray-600">{`Para entrega el día ${item.deliveryDate}`}</p>
                   </div>
                 </div>
 
