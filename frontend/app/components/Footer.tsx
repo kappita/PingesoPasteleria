@@ -16,11 +16,6 @@ export default function Footer() {
         <a href="#pasteleria" className="font-medium text-lg underline underline-offset-4 hover:text-[#faecd8] transition">Pastelería</a>
       </nav>
 
-      {/* Info institucional abajo izquierda */}
-      <div className="absolute left-10 bottom-8 text-left text-white/90 text-base">
-        <p>&copy; 2025 Tortas con Diseños</p>
-        <p>Desarrollado por</p>
-      </div>
     </footer>
   );
 }
