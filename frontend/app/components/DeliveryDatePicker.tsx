@@ -53,12 +53,12 @@ export default function DeliveryDatePicker({ value, onChange }: Props) {
 
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <Button variant="monica" className="p-6 text-lg font-medium justify-start">
-            {value ? value : "Selecciona una fecha de entrega"}
+          <Button variant="outline" className="w-full justify-start">
+            {value ? value : "Selecciona una fecha"}
           </Button>
         </PopoverTrigger>
 
-        <PopoverContent className="p-0 bg-[#FFF1DB]">
+        <PopoverContent className="p-0">
           <Calendar
             mode="single"
             selected={selectedDate}

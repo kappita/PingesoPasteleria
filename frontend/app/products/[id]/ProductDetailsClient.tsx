@@ -3,8 +3,7 @@ import { useRouter } from 'next/navigation';
 import { useCart } from "../../context/CartContext";
 import DeliveryDatePicker from "../../components/DeliveryDatePicker";
 import { useState, useEffect } from "react";
-import DeliveryDatePicker from "../../components/DeliveryDatePicker";
-import { useDeliveryAvailability } from '@/app/hooks/useDeliveryAvailability';
+import { useDeliveryAvailability } from "../../hooks/useDeliveryAvailability";
 
 
 interface Product {
@@ -119,10 +118,6 @@ export default function ProductDetailsClient({ product, variations }: bruh) {
   const { addToCart } = useCart();
   const router = useRouter();
 
-  useEffect(() => {
-    if (deliveryDate) refresh();
-  }, [deliveryDate]);
-
 
   useEffect(() => {
     if (deliveryDate) refresh();
@@ -167,13 +162,8 @@ export default function ProductDetailsClient({ product, variations }: bruh) {
       return false;
     }
 
-    if (deliveryDate == '') {
-      setMessage("Debe seleccionar una fecha de entrega");
-      return false;
-    }
-
     const item = currentVariation || product;
-    console.log('La fecha de entrega es', deliveryDate)
+
     addToCart({
       id: item.id,
       name: product.name,
@@ -206,7 +196,7 @@ export default function ProductDetailsClient({ product, variations }: bruh) {
           alt={product.name}
           className="w-full h-96 mb-6 object-cover"
         />
-        <div className="w-full px-24">
+        <div className="w-full px-16">
           <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
           
           {/* Mostrar precio */}
@@ -255,13 +245,8 @@ export default function ProductDetailsClient({ product, variations }: bruh) {
             />
           </div>
           {/* TODO: AGREGAR SELECCION DE FECHA */}
-          <DeliveryDatePicker
 
-            value={deliveryDate}
-            onChange={setDeliveryDate}
-          />
-
-      <div className="flex w-[70%] items-stretch justify-between mt-6">
+      <div className="flex w-[70%] items-stretch justify-between">
       {/* Botón agregar al carrito */}
       <button
         onClick={handleAddToCart}
@@ -277,10 +262,7 @@ export default function ProductDetailsClient({ product, variations }: bruh) {
         onClick={handleBuyNow}
         className="bg-[#E985A7] rounded-full text-white px-6 py-3  hover:bg-pink-600 w-[40%]"
       >
-        {(!deliveryDate ||
-          (getDailyRemaining(deliveryDate) ?? 0) <= 0 ||
-          (data?.global_remaining ?? 0) <= 0)
-          ? "No disponible" : "Comprar ahora"}
+        Comprar ahora
       </button>
 
 
