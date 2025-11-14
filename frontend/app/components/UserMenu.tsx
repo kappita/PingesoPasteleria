@@ -6,7 +6,10 @@ import { FaRegUserCircle } from "react-icons/fa";
 
 export default function UserMenu() {
   const [open, setOpen] = useState(false);
-  const [user, setUser] = useState<{ name: string } | null>(null);
+  const [user, setUser] = useState<{
+    firstName: string;
+    lastName: string;
+  } | null>(null);
 
   useEffect(() => {
     async function fetchUser() {
@@ -29,29 +32,45 @@ export default function UserMenu() {
 
   return (
     <div className="relative" onClick={() => setOpen(!open)}>
-      <FaRegUserCircle size={25} className="cursor-pointer" />
+      <FaRegUserCircle className="h-10 w-10 cursor-pointer" />
 
       {open && (
-        <div className="absolute right-0 mt-2 bg-white border-3 rounded-xl p-2 text-sm">
+        <div className="absolute right-0 mt-2 bg-white border-3 rounded-xl p-2 text-sm min-w-50">
           {user ? (
-            <>
-              <p className="font-semibold text-gray-700">
-                ¡Bienvenido!, {user.name}
+            <div className="flex flex-col">
+              <p className="text-center font-semibold text-gray-700">
+                ¡Bienvenido!, {user.firstName} {user.lastName}
               </p>
+
+              <Link
+                href="/my-account/orders"
+                className="text-center mt-2 hover:underline"
+              >
+                Mi cuenta
+              </Link>
+
               <button
                 onClick={handleLogout}
-                className="mt-2 text-red-600 hover:underline"
+                className="text-center mt-2 text-red-600 hover:underline"
               >
                 Cerrar sesión
               </button>
-            </>
+            </div>
           ) : (
-            <Link
-              href="/login"
-              className="text-blue-600 hover:underline whitespace-nowrap p-2"
-            >
-              Iniciar sesión
-            </Link>
+            <nav className="flex flex-col">
+              <Link
+                href="/login"
+                className="text-center hover:bg-blue-500 whitespace-nowrap p-3 border border-black rounded-full bg-blue-300 mb-3"
+              >
+                Iniciar sesión
+              </Link>
+              <Link
+                href="/register"
+                className="text-center hover:bg-blue-500 whitespace-nowrap p-3 border border-black rounded-full bg-blue-300"
+              >
+                Registrarse
+              </Link>
+            </nav>
           )}
         </div>
       )}

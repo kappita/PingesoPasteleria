@@ -2,6 +2,8 @@
 import { useRouter } from 'next/navigation';
 import { useCart } from "../../context/CartContext";
 import { useState, useEffect } from "react";
+import DeliveryDatePicker from "../../components/DeliveryDatePicker";
+import { useDeliveryAvailability } from '@/app/hooks/useDeliveryAvailability';
 
 
 interface Product {
@@ -111,8 +113,14 @@ export default function ProductDetailsClient({ product, variations }: bruh) {
   const [currentVariation, setCurrentVariation] = useState<any>(null);
   const [quantity, setQuantity] = useState(1);
   const [message, setMessage] = useState<string | null>(null);
+  const [deliveryDate, setDeliveryDate] = useState<string>("");
+  const { data, getDailyRemaining, refresh } = useDeliveryAvailability();
   const { addToCart } = useCart();
   const router = useRouter();
+
+  useEffect(() => {
+    if (deliveryDate) refresh();
+  }, [deliveryDate]);
 
 
   // Actualiza la variación actual cuando cambian los selects
@@ -154,8 +162,13 @@ export default function ProductDetailsClient({ product, variations }: bruh) {
       return false;
     }
 
-    const item = currentVariation || product;
+    if (deliveryDate == '') {
+      setMessage("Debe seleccionar una fecha de entrega");
+      return false;
+    }
 
+    const item = currentVariation || product;
+    console.log('La fecha de entrega es', deliveryDate)
     addToCart({
       id: item.id,
       name: product.name,
@@ -163,6 +176,7 @@ export default function ProductDetailsClient({ product, variations }: bruh) {
       quantity,
       image: item.image?.src || product.images[0]?.src,
       attributes: selectedAttrs,
+      deliveryDate: deliveryDate,
     });
 
     setMessage("✅ Producto añadido al carrito!");
@@ -187,7 +201,7 @@ export default function ProductDetailsClient({ product, variations }: bruh) {
           alt={product.name}
           className="w-full h-96 mb-6 object-cover"
         />
-        <div className="w-full px-16">
+        <div className="w-full px-24">
           <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
           
           {/* Mostrar precio */}
@@ -236,20 +250,32 @@ export default function ProductDetailsClient({ product, variations }: bruh) {
             />
           </div>
           {/* TODO: AGREGAR SELECCION DE FECHA */}
+          <DeliveryDatePicker
 
-      <div className="flex w-[70%] items-stretch justify-between">
+            value={deliveryDate}
+            onChange={setDeliveryDate}
+          />
+
+      <div className="flex w-[70%] items-stretch justify-between mt-6">
       {/* Botón agregar al carrito */}
       <button
         onClick={handleAddToCart}
         className="bg-transparent border-[#E985A7] border-2 text-[#E985A7] px-6 py-3 rounded-full w-[40%]"
       >
-        Agregar al carrito
+        {(!deliveryDate ||
+          (getDailyRemaining(deliveryDate) ?? 0) <= 0 ||
+          (data?.global_remaining ?? 0) <= 0)
+          ? "No disponible"
+          : "Agregar al carrito"}
       </button>
       <button
         onClick={handleBuyNow}
         className="bg-[#E985A7] rounded-full text-white px-6 py-3  hover:bg-pink-600 w-[40%]"
       >
-        Comprar ahora
+        {(!deliveryDate ||
+          (getDailyRemaining(deliveryDate) ?? 0) <= 0 ||
+          (data?.global_remaining ?? 0) <= 0)
+          ? "No disponible" : "Comprar ahora"}
       </button>
 
 

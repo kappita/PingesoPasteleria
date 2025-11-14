@@ -40,6 +40,7 @@ export default function CartPage() {
                   <div>
                     <h2 className="font-semibold">{item.name}</h2>
                     <p className="text-gray-600">${item.price}</p>
+                    <p className="text-gray-600">{`Para entrega el día ${item.deliveryDate}`}</p>
                   </div>
                 </div>
 
