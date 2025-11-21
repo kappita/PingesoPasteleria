@@ -10,6 +10,7 @@ export default async function ProductsPage(props: {
     max_price?: string;
   }>;
 }) {
+
   const searchParams = await props.searchParams;
   const currentPage = Number(searchParams.page) || 1;
   const perPage = 12;
@@ -24,16 +25,22 @@ export default async function ProductsPage(props: {
   if (searchParams.category) params.category = searchParams.category;
   if (searchParams.min_price) params.min_price = searchParams.min_price;
   if (searchParams.max_price) params.max_price = searchParams.max_price;
+  if (searchParams.page) params.page = searchParams.page;
 
   const response = await api.get("products", params);
   const products = response.data;
   const totalPages = Number(response.headers["x-wp-totalpages"]);
+  const totalItems = response.headers['x-wp-total'];
+  const itemsShown =  response.data.length
+  const nonNegativeCurrent = currentPage > 1 ? currentPage - 1 : 0
 
   return (
-    <main className="flex">
+    <main className="w-[70vw] py-6">
+      <p className="ml-[20%] pl-6 text-xl font-semibold">Mostrando {1 + (nonNegativeCurrent) * perPage}-{perPage * nonNegativeCurrent + itemsShown} de {totalItems} resultados</p>
+      <div className="w-full flex">
       {/* 🔹 Barra lateral de filtros */}
-      <aside className="w-64 border-r p-6">
-        <FiltersClient categories={categories} />
+      <aside className="w-[20%] border-r p-6">
+        <FiltersClient categories={categories}/>
       </aside>
 
       {/* 🔹 Productos */}
@@ -44,6 +51,7 @@ export default async function ProductsPage(props: {
           totalPages={totalPages}
         />
       </section>
+      </div>
     </main>
   );
 }

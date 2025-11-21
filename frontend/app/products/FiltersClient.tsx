@@ -2,10 +2,16 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
+import api from "../lib/woocommerce";
 
 export default function FiltersClient({ categories }: any) {
   const router = useRouter();
   const searchParams = useSearchParams();
+
+
+  // Get total count from headers
+  const totalProducts = 0
+
 
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") || "");
   const [minPrice, setMinPrice] = useState(searchParams.get("min_price") || "");
@@ -16,9 +22,20 @@ export default function FiltersClient({ categories }: any) {
     if (selectedCategory) query.set("category", selectedCategory);
     if (minPrice) query.set("min_price", minPrice);
     if (maxPrice) query.set("max_price", maxPrice);
+    query.set("page", '1')
 
     router.push(`/products?${query.toString()}`);
   };
+
+  const filterByCategory = (e: any) => {
+    console.log("Filtrando")
+    const query = new URLSearchParams();
+    if (minPrice) query.set("min_price", minPrice);
+    if (maxPrice) query.set("max_price", maxPrice);
+    query.set('page', '1')
+    query.set("category", e);
+    router.push(`/products?${query.toString()}`);
+  }
 
   const clearFilters = () => {
     setSelectedCategory("");
@@ -29,27 +46,36 @@ export default function FiltersClient({ categories }: any) {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-bold">Filtros</h2>
+      <h2 className="text-xl font-bold">Categorías</h2>
 
       {/* Categorías */}
       <div>
-        <h3 className="font-semibold mb-2">Categoría</h3>
-        <select
-          value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value)}
-          className="border p-2 rounded w-full"
-        >
-          <option value="">Todas</option>
-          {categories.map((cat: any) => (
-            <option key={cat.id} value={cat.id}>
-              {cat.name}
-            </option>
-          ))}
-        </select>
+        <nav>
+          <ul className="divide-y divide-black">
+            {categories.map((cat: any) => (
+              <li key={cat.id} className="py-3">
+                <button 
+                  onClick={() => filterByCategory(cat.id)}
+                  className="w-full text-left hover:text-blue-600"
+                >
+                  {cat.name} ({cat.count})
+                </button>
+              </li>
+            ))}
+            <li key={0} className="py-3">
+              <button 
+                onClick={() => filterByCategory(0)}
+                className="w-full text-left hover:text-blue-600"
+              >
+                Todos
+              </button>
+            </li>
+          </ul>
+        </nav>
       </div>
 
       {/* Precio */}
-      <div>
+      {/* <div>
         <h3 className="font-semibold mb-2">Rango de precios</h3>
         <div className="flex gap-2">
           <input
@@ -67,9 +93,9 @@ export default function FiltersClient({ categories }: any) {
             className="border p-2 rounded w-1/2"
           />
         </div>
-      </div>
+      </div> */}
 
-      <button
+      {/* <button
         onClick={applyFilters}
         className="w-full bg-pink-500 text-white rounded p-2 hover:bg-pink-600"
       >
@@ -81,7 +107,7 @@ export default function FiltersClient({ categories }: any) {
         className="w-full border border-gray-300 rounded p-2 mt-2 hover:bg-gray-100"
       >
         Limpiar
-      </button>
+      </button> */}
     </div>
   );
 }
