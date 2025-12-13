@@ -29,7 +29,9 @@ export default function RootLayout({
     <html lang="es">
       <body className="bg-[#FFF1DB] text-gray-900">
         <Header />
-        <CartProvider>{children}</CartProvider>
+        <CartProvider>
+          <div className="flex flex-col items-center">{children}</div>
+        </CartProvider>
         <Footer />
       </body>
     </html>

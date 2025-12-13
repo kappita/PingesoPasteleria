@@ -72,7 +72,7 @@ const Header = () => {
             Inicio
           </Link>
           <Link
-            href="/products"
+            href="/products?page=1"
             className="flex items-center justify-center text-center text-white hover:text-pink-100 font-medium transition h-12 w-40"
           >
             Tienda
