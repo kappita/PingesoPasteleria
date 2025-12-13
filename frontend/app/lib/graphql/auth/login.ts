@@ -24,7 +24,6 @@ export async function login(username: string, password: string) {
     const { login } = await client.request(LOGIN, { username, password });
     return login;
   } catch (err: any) {
-    console.error("Error en la autenticación:", err);
     throw new Error("Error en la autenticación");
   }
 }

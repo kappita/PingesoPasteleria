@@ -8,7 +8,7 @@ export default function CartPage() {
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   return (
-    <main className="max-w-4xl mx-auto p-6">
+    <main className="max-w-4xl mx-auto p-getOrder6">
       <h1 className="text-3xl font-bold mb-8">Tu Carrito</h1>
 
       {cart.length === 0 ? (

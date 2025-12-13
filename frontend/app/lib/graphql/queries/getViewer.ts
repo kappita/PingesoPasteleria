@@ -21,7 +21,6 @@ export async function getViewer(token: string) {
     const { viewer } = await client.request(VIEWER);
     return viewer;
   } catch (err) {
-    console.error("Error verificando token:", err);
-    return null;
+    throw err;
   }
 }

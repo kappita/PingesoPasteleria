@@ -1,4 +1,5 @@
 import Link from "next/link";
+import WhatsappIcon from "./components/WhatsappIcon";
 
 const catalogItems = [
   {
@@ -13,7 +14,7 @@ const catalogItems = [
     name: "Queques",
     image: "/assets/queque.png",
     featured: true,
-  }
+  },
 ];
 
 export default function HomePage() {
@@ -31,14 +32,22 @@ export default function HomePage() {
             </div>
           </div>
           <div className="bg-[#fbbb5b] rounded-tr-[20px] rounded-br-[20px] rounded-bl-[20px] rounded-tl-[0px] p-24 flex-1 flex flex-col justify-center min-h-[350px] -ml-48 z-0">
-            <h2 className="font-bold text-white text-4xl mb-4 translate-x-30 ">Tortas con Diseños</h2>
+            <h2 className="font-bold text-white text-4xl mb-4 translate-x-30 ">
+              Tortas con Diseños
+            </h2>
             <hr className="border-white/80 mb-3 translate-x-32 overflow-hidden w-[80%]" />
             <p className="text-white text-md translate-x-32 w-[80%]">
-              Pastelería fina y coctelería tortas con diseño. Ofrecemos una amplia gama de productos, para todas tus celebraciones y eventos. Con productos de calidad, sin pre mezclas, 100% artesanal. Años de experiencia en el rubro. Chef Pastelera titulada. Especializada en pastelería nacional e internacional, capacitada para pastelería saludable, sin gluten, sin azúcar, sin lactosa, también en coctelería dulce y salada.
+              Pastelería fina y coctelería tortas con diseño. Ofrecemos una
+              amplia gama de productos, para todas tus celebraciones y eventos.
+              Con productos de calidad, sin pre mezclas, 100% artesanal. Años de
+              experiencia en el rubro. Chef Pastelera titulada. Especializada en
+              pastelería nacional e internacional, capacitada para pastelería
+              saludable, sin gluten, sin azúcar, sin lactosa, también en
+              coctelería dulce y salada.
             </p>
           </div>
         </div>
-        <a
+        {/*<a
           href="https://wa.me/56912345678"
           target="_blank"
           rel="noopener noreferrer"
@@ -51,9 +60,9 @@ export default function HomePage() {
             className="w-16 h-16"
             draggable={false}
           />
-        </a>
+        </a>*/}
+        <WhatsappIcon />
       </section>
-
 
       <section className="py-20">
         <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-[#fbbb5b]">
@@ -120,7 +129,9 @@ export default function HomePage() {
             </h2>
             <hr className="border-white w-4/5 my-4" />
             <p className="text-white text-md font-medium mb-10 w-[75%]">
-              Reserva tu desayuno sorpresa personalizado para la ocasión especial, ya sea un cumpleaños o la celebración de algún logro, regala a tu familia, amigos, pareja, con nosotros!
+              Reserva tu desayuno sorpresa personalizado para la ocasión
+              especial, ya sea un cumpleaños o la celebración de algún logro,
+              regala a tu familia, amigos, pareja, con nosotros!
             </p>
             <button className="border-2 border-white rounded-full px-12 py-4 text-white text-lg hover:bg-white hover:text-[#e991b5] transition font-medium">
               Comprar

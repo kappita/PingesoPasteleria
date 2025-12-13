@@ -4,9 +4,8 @@ import { useEffect, useState } from "react";
 import {
   getWcpddAvailability,
   getWcpddDates,
-  getWcpddConfig
+  getWcpddConfig,
 } from "../lib/wcpdd";
-import { refresh } from "next/cache";
 
 export interface DateAvailabilityMap {
   [ymd: string]: number; // remaining units for that day
@@ -66,7 +65,6 @@ export function useDeliveryAvailability() {
     if (!data.date_map[ymd]) return null;
     return data.date_map[ymd];
   };
-
 
   return { data, loading, getDailyRemaining, refresh };
 }

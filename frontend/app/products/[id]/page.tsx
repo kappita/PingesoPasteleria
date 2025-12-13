@@ -10,10 +10,10 @@ interface Product {
   date_created_gmt: string;
   date_modified: string;
   date_modified_gmt: string;
-  type: 'simple' | 'grouped' | 'external' | 'variable';
-  status: 'draft' | 'pending' | 'private' | 'publish';
+  type: "simple" | "grouped" | "external" | "variable";
+  status: "draft" | "pending" | "private" | "publish";
   featured: boolean;
-  catalog_visibility: 'visible' | 'catalog' | 'search' | 'hidden';
+  catalog_visibility: "visible" | "catalog" | "search" | "hidden";
   description: string;
   short_description: string;
   sku: string;
@@ -34,12 +34,12 @@ interface Product {
   download_expiry: number;
   external_url: string;
   button_text: string;
-  tax_status: 'taxable' | 'shipping' | 'none';
+  tax_status: "taxable" | "shipping" | "none";
   tax_class: string;
   manage_stock: boolean;
   stock_quantity: number | null;
-  stock_status: 'instock' | 'outofstock' | 'onbackorder';
-  backorders: 'no' | 'notify' | 'yes';
+  stock_status: "instock" | "outofstock" | "onbackorder";
+  backorders: "no" | "notify" | "yes";
   backorders_allowed: boolean;
   backordered: boolean;
   sold_individually: boolean;
@@ -97,11 +97,13 @@ interface Dimensions {
   height: string;
 }
 
-
-
-export default async function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function ProductDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
-  const { data: product }: {data: Product} = await api.get(`products/${id}`);
+  const { data: product }: { data: Product } = await api.get(`products/${id}`);
 
   const { data: variations } =
     product.type === "variable"
@@ -114,4 +116,3 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
     </main>
   );
 }
-
