@@ -51,7 +51,7 @@ const Header = () => {
       <nav className="bg-[#E985A7] shadow-md">
         <div className="hidden md:flex justify-center items-center py-1 gap-16 text-md">
           <Link href="/" className="flex items-center justify-center text-center text-white hover:text-pink-100 font-medium transition h-12 w-40">Inicio</Link>
-          <Link href="/products" className="flex items-center justify-center text-center text-white hover:text-pink-100 font-medium transition h-12 w-40">Tienda</Link>
+          <Link href="/products?page=1" className="flex items-center justify-center text-center text-white hover:text-pink-100 font-medium transition h-12 w-40">Tienda</Link>
           <Link href="/us" className="flex items-center justify-center text-center text-white hover:text-pink-100 font-medium transition h-12 w-40">Nosotros</Link>
           <Link href="/events" className="flex items-center justify-center text-center text-white hover:text-pink-100 font-medium  transition h-8 w-40">Eventos</Link>
           <Link href="/cards" className="flex items-center justify-center text-center text-white hover:text-pink-100 font-medium transition h-12 w-40">Cartas</Link>

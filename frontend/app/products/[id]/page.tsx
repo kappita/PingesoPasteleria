@@ -109,7 +109,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
       : { data: [] };
 
   return (
-    <main className="p-8">
+    <main className="w-[85vw] flex flex-col justify-center items-center p-8">
       <ProductDetailsClient product={product} variations={variations} />
     </main>
   );

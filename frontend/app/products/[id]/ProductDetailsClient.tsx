@@ -192,7 +192,7 @@ export default function ProductDetailsClient({ product, variations }: bruh) {
   }
 
   return (
-    <div className="w-[85vw] mx-auto">
+    <div className="mx-auto">
       {/* TODO: IMPLEMENTAR BREADCRUMBS PARA MANEJO DE CATEGORÍAS */}
       <p>{`Productos > ${product.categories[0].name} > ${product.name}`}</p>
       <div className="grid grid-cols-2">

@@ -32,7 +32,9 @@ export default function RootLayout({
       <body className="bg-[#FFF1DB] text-gray-900">
         <Header />        
         <CartProvider>
-          {children}
+          <div className="flex flex-col items-center">
+            {children}
+          </div>
         </CartProvider>
         <Footer />
       </body>
