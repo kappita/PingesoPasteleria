@@ -2,9 +2,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { CartProvider } from "./context/CartContext";
-import Link from "next/link";
-import { ShoppingCart } from "lucide-react";
-import Header from './components/header';
+import Header from "./components/header";
 import Footer from "./components/Footer";
 
 const geistSans = Geist({
@@ -30,9 +28,9 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className="bg-[#FFF1DB] text-gray-900">
-        <Header />        
+        <Header />
         <CartProvider>
-          {children}
+          <div className="flex flex-col items-center">{children}</div>
         </CartProvider>
         <Footer />
       </body>

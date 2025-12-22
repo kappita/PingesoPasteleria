@@ -2,6 +2,7 @@
 
 import Form from "next/form";
 import { useEffect, useState } from "react";
+import { EyeIcon, EyeOffIcon } from "lucide-react";
 
 export default function EditAccountPage() {
   const [user, setUser] = useState<{
@@ -13,6 +14,9 @@ export default function EditAccountPage() {
 
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword2, setShowPassword2] = useState(false);
+  const [showPassword3, setShowPassword3] = useState(false);
 
   useEffect(() => {
     async function fetchUser() {
@@ -49,6 +53,16 @@ export default function EditAccountPage() {
       }
       if (newPass !== newPass2) {
         setMessage("Las contraseñas nuevas no coinciden.");
+        setLoading(false);
+        return;
+      }
+      const passwordRegex =
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}[\]|:;"'<>,.?/]).{8,}$/;
+
+      if (!passwordRegex.test(newPass!)) {
+        setMessage(
+          "La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un símbolo."
+        );
         setLoading(false);
         return;
       }
@@ -129,25 +143,61 @@ export default function EditAccountPage() {
       <div className="flex flex-col mb-5 border-2 rounded-lg p-3">
         <h2>Cambiar contraseña</h2>
         <p>Contraseña actual (déjalo en blanco para no cambiarla)</p>
-        <input
-          type="password"
-          name="actualPass"
-          className="w-1rem bg-white mb-5 text-center"
-        />
+        <div className="relative">
+          <input
+            type={showPassword ? "text" : "password"}
+            placeholder="Contraseña"
+            name="actualPass"
+            required
+            className="w-full mb-4 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            tabIndex={-1}
+            className="absolute right-3 top-1/2 -translate-y-4 text-gray-500"
+          >
+            {showPassword ? <EyeIcon size={20} /> : <EyeOffIcon size={20} />}
+          </button>
+        </div>
 
         <p>Nueva contraseña (déjalo en blanco para no cambiarla)</p>
-        <input
-          type="password"
-          name="newPass"
-          className="w-1rem bg-white mb-5 text-center"
-        />
+        <div className="relative">
+          <input
+            type={showPassword2 ? "text" : "password"}
+            placeholder="Contraseña"
+            name="newPass"
+            required
+            className="w-full mb-4 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword2(!showPassword2)}
+            tabIndex={-1}
+            className="absolute right-3 top-1/2 -translate-y-4 text-gray-500"
+          >
+            {showPassword2 ? <EyeIcon size={20} /> : <EyeOffIcon size={20} />}
+          </button>
+        </div>
 
         <p>Confirmar nueva contraseña (déjalo en blanco para no cambiarla)</p>
-        <input
-          type="password"
-          name="newPass2"
-          className="w-1rem bg-white mb-5 text-center"
-        />
+        <div className="relative">
+          <input
+            type={showPassword3 ? "text" : "password"}
+            placeholder="Contraseña"
+            name="newPass2"
+            required
+            className="w-full mb-4 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword3(!showPassword3)}
+            tabIndex={-1}
+            className="absolute right-3 top-1/2 -translate-y-4 text-gray-500"
+          >
+            {showPassword3 ? <EyeIcon size={20} /> : <EyeOffIcon size={20} />}
+          </button>
+        </div>
       </div>
 
       <button

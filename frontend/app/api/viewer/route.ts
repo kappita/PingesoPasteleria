@@ -5,12 +5,13 @@ import { getViewer } from "@/app/lib/graphql/queries/getViewer";
 export async function GET() {
   const cookiesStore = await cookies();
   const token = cookiesStore.get("authToken")?.value;
-  if (!token) return NextResponse.json({ viewer: null });
+  if (!token) return NextResponse.json({ viewer: null }, { status: 200 });
 
   try {
     const viewer = await getViewer(token);
     return NextResponse.json({ viewer });
   } catch {
-    return NextResponse.json({ viewer: null });
+    cookiesStore.delete("authToken");
+    return NextResponse.json({ viewer: null }, { status: 401 });
   }
 }

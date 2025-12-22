@@ -1,10 +1,9 @@
 "use client";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 import { useCart } from "../../context/CartContext";
 import { useState, useEffect } from "react";
 import DeliveryDatePicker from "../../components/DeliveryDatePicker";
-import { useDeliveryAvailability } from '@/app/hooks/useDeliveryAvailability';
-
+import { useDeliveryAvailability } from "@/app/hooks/useDeliveryAvailability";
 
 interface Product {
   id: number;
@@ -15,10 +14,10 @@ interface Product {
   date_created_gmt: string;
   date_modified: string;
   date_modified_gmt: string;
-  type: 'simple' | 'grouped' | 'external' | 'variable';
-  status: 'draft' | 'pending' | 'private' | 'publish';
+  type: "simple" | "grouped" | "external" | "variable";
+  status: "draft" | "pending" | "private" | "publish";
   featured: boolean;
-  catalog_visibility: 'visible' | 'catalog' | 'search' | 'hidden';
+  catalog_visibility: "visible" | "catalog" | "search" | "hidden";
   description: string;
   short_description: string;
   sku: string;
@@ -39,12 +38,12 @@ interface Product {
   download_expiry: number;
   external_url: string;
   button_text: string;
-  tax_status: 'taxable' | 'shipping' | 'none';
+  tax_status: "taxable" | "shipping" | "none";
   tax_class: string;
   manage_stock: boolean;
   stock_quantity: number | null;
-  stock_status: 'instock' | 'outofstock' | 'onbackorder';
-  backorders: 'no' | 'notify' | 'yes';
+  stock_status: "instock" | "outofstock" | "onbackorder";
+  backorders: "no" | "notify" | "yes";
   backorders_allowed: boolean;
   backordered: boolean;
   sold_individually: boolean;
@@ -103,13 +102,14 @@ interface Dimensions {
 }
 
 type bruh = {
-  product: Product,
-  variations: any
-}
-
+  product: Product;
+  variations: any;
+};
 
 export default function ProductDetailsClient({ product, variations }: bruh) {
-  const [selectedAttrs, setSelectedAttrs] = useState<{ [key: string]: string }>({});
+  const [selectedAttrs, setSelectedAttrs] = useState<{ [key: string]: string }>(
+    {}
+  );
   const [currentVariation, setCurrentVariation] = useState<any>(null);
   const [quantity, setQuantity] = useState(1);
   const [message, setMessage] = useState<string | null>(null);
@@ -121,7 +121,6 @@ export default function ProductDetailsClient({ product, variations }: bruh) {
   useEffect(() => {
     if (deliveryDate) refresh();
   }, [deliveryDate]);
-
 
   // Actualiza la variación actual cuando cambian los selects
   useEffect(() => {
@@ -147,13 +146,14 @@ export default function ProductDetailsClient({ product, variations }: bruh) {
   };
 
   // Precio actual
-  const currentPrice =
-    currentVariation?.price || product.price || "N/A";
+  const currentPrice = currentVariation?.price || product.price || "N/A";
 
   // Agregar al carrito
   const handleAddToCart = () => {
     if (product.type === "variable" && !currentVariation) {
-      setMessage("⚠️ Debes seleccionar todas las opciones antes de agregar al carrito.");
+      setMessage(
+        "⚠️ Debes seleccionar todas las opciones antes de agregar al carrito."
+      );
       return false;
     }
 
@@ -162,13 +162,13 @@ export default function ProductDetailsClient({ product, variations }: bruh) {
       return false;
     }
 
-    if (deliveryDate == '') {
+    if (deliveryDate == "") {
       setMessage("Debe seleccionar una fecha de entrega");
       return false;
     }
 
     const item = currentVariation || product;
-    console.log('La fecha de entrega es', deliveryDate)
+    console.log("La fecha de entrega es", deliveryDate);
     addToCart({
       id: item.id,
       name: product.name,
@@ -180,19 +180,18 @@ export default function ProductDetailsClient({ product, variations }: bruh) {
     });
 
     setMessage("✅ Producto añadido al carrito!");
-    return true
+    return true;
   };
 
   const handleBuyNow = () => {
-    const res = handleAddToCart()
+    const res = handleAddToCart();
     if (res) {
-      router.push('/cart')
+      router.push("/cart");
     }
-    
-  }
+  };
 
   return (
-    <div className="w-[85vw] mx-auto">
+    <div className="mx-auto">
       {/* TODO: IMPLEMENTAR BREADCRUMBS PARA MANEJO DE CATEGORÍAS */}
       <p>{`Productos > ${product.categories[0].name} > ${product.name}`}</p>
       <div className="grid grid-cols-2">
@@ -203,12 +202,11 @@ export default function ProductDetailsClient({ product, variations }: bruh) {
         />
         <div className="w-full px-24">
           <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
-          
+
           {/* Mostrar precio */}
           <p className="text-2xl font-semibold mb-6">
-            ${ (parseFloat(currentPrice) * quantity).toFixed(2) }
+            ${(parseFloat(currentPrice) * quantity).toFixed(2)}
           </p>
-
 
           <p className="text-gray-700 mb-4">
             {product.description.replace(/<[^>]+>/g, "")}
@@ -222,7 +220,9 @@ export default function ProductDetailsClient({ product, variations }: bruh) {
                   Selecciona {attr.name.toLowerCase()}:
                 </label>
                 <select
-                  onChange={(e) => handleSelectChange(attr.name, e.target.value)}
+                  onChange={(e) =>
+                    handleSelectChange(attr.name, e.target.value)
+                  }
                   value={selectedAttrs[attr.name] || ""}
                   className="border p-3 w-full max-w-sm"
                 >
@@ -250,57 +250,45 @@ export default function ProductDetailsClient({ product, variations }: bruh) {
             />
           </div>
           {/* TODO: AGREGAR SELECCION DE FECHA */}
-          <DeliveryDatePicker
+          <DeliveryDatePicker value={deliveryDate} onChange={setDeliveryDate} />
 
-            value={deliveryDate}
-            onChange={setDeliveryDate}
-          />
-
-      <div className="flex w-[70%] items-stretch justify-between mt-6">
-      {/* Botón agregar al carrito */}
-      <button
-        onClick={handleAddToCart}
-        className="bg-transparent border-[#E985A7] border-2 text-[#E985A7] px-6 py-3 rounded-full w-[40%]"
-      >
-        {(!deliveryDate ||
-          (getDailyRemaining(deliveryDate) ?? 0) <= 0 ||
-          (data?.global_remaining ?? 0) <= 0)
-          ? "No disponible"
-          : "Agregar al carrito"}
-      </button>
-      <button
-        onClick={handleBuyNow}
-        className="bg-[#E985A7] rounded-full text-white px-6 py-3  hover:bg-pink-600 w-[40%]"
-      >
-        {(!deliveryDate ||
-          (getDailyRemaining(deliveryDate) ?? 0) <= 0 ||
-          (data?.global_remaining ?? 0) <= 0)
-          ? "No disponible" : "Comprar ahora"}
-      </button>
-
-
-      </div>
-      {/* Mensaje de confirmación */}
-      {message && (
-        <div
-          className={`mt-4 text-center p-3 rounded ${
-            message.startsWith("✅")
-              ? "bg-green-100 text-green-700"
-              : "bg-yellow-100 text-yellow-700"
-          }`}
-        >
-          {message}
+          <div className="flex w-[70%] items-stretch justify-between mt-6">
+            {/* Botón agregar al carrito */}
+            <button
+              onClick={handleAddToCart}
+              className="bg-transparent border-[#E985A7] border-2 text-[#E985A7] px-6 py-3 rounded-full w-[40%]"
+            >
+              {!deliveryDate ||
+              (getDailyRemaining(deliveryDate) ?? 0) <= 0 ||
+              (data?.global_remaining ?? 0) <= 0
+                ? "No disponible"
+                : "Agregar al carrito"}
+            </button>
+            <button
+              onClick={handleBuyNow}
+              className="bg-[#E985A7] rounded-full text-white px-6 py-3  hover:bg-pink-600 w-[40%]"
+            >
+              {!deliveryDate ||
+              (getDailyRemaining(deliveryDate) ?? 0) <= 0 ||
+              (data?.global_remaining ?? 0) <= 0
+                ? "No disponible"
+                : "Comprar ahora"}
+            </button>
+          </div>
+          {/* Mensaje de confirmación */}
+          {message && (
+            <div
+              className={`mt-4 text-center p-3 rounded ${
+                message.startsWith("✅")
+                  ? "bg-green-100 text-green-700"
+                  : "bg-yellow-100 text-yellow-700"
+              }`}
+            >
+              {message}
+            </div>
+          )}
         </div>
-      )}
-
-
-        </div>
-
       </div>
-
-
-
-
     </div>
   );
 }

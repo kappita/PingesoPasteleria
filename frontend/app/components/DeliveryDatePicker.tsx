@@ -2,10 +2,14 @@
 
 import { useDeliveryAvailability } from "../hooks/useDeliveryAvailability";
 import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
-import {es} from "date-fns/locale/es";
+import { es } from "date-fns/locale/es";
 import { useState } from "react";
 
 interface Props {
@@ -16,7 +20,6 @@ interface Props {
 export default function DeliveryDatePicker({ value, onChange }: Props) {
   const { data, loading, getDailyRemaining } = useDeliveryAvailability();
   const [open, setOpen] = useState(false);
-
 
   if (loading) return <p>Cargando fecha de entrega…</p>;
   if (!data) return <p>No se pudo cargar disponibilidad</p>;
@@ -34,16 +37,20 @@ export default function DeliveryDatePicker({ value, onChange }: Props) {
     if (data.blocked.includes(ymd)) return true;
 
     // Sin cupo disponible
-    if (data.date_map[ymd] !== undefined && data.date_map[ymd] <= 0) return true;
+    if (data.date_map[ymd] !== undefined && data.date_map[ymd] <= 0)
+      return true;
 
     return false;
   };
 
-  const selectedDate =
-    value ? new Date(value + "T00:00:00") : new Date(data.first_valid + "T00:00:00");
+  const selectedDate = value
+    ? new Date(value + "T00:00:00")
+    : new Date(data.first_valid + "T00:00:00");
 
-  const daily = selectedDate ? getDailyRemaining(format(selectedDate, "yyyy-MM-dd")) : null;
-  
+  const daily = selectedDate
+    ? getDailyRemaining(format(selectedDate, "yyyy-MM-dd"))
+    : null;
+
   return (
     <div className="space-y-2">
       <p className="text-sm text-gray-700">
@@ -53,7 +60,10 @@ export default function DeliveryDatePicker({ value, onChange }: Props) {
 
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <Button variant="monica" className="p-6 text-lg text-black font-medium justify-start">
+          <Button
+            variant="monica"
+            className="p-6 text-lg text-black font-medium justify-start"
+          >
             {value ? value : "Selecciona una fecha de entrega"}
           </Button>
         </PopoverTrigger>
