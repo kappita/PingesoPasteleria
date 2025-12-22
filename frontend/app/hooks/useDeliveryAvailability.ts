@@ -58,7 +58,7 @@ export function useDeliveryAvailability() {
     return () => clearInterval(interval);
   }, []);
 
-  // 🔁 Añadir una función pública para forzar recarga (opcional)
+  //Añadir una función pública para forzar recarga (opcional)
   const refresh = () => load();
 
   const getDailyRemaining = (ymd: string) => {
