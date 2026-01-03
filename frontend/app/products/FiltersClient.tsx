@@ -2,7 +2,6 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
-import api from "../lib/woocommerce";
 
 export default function FiltersClient({ categories }: any) {
   const router = useRouter();
@@ -54,7 +53,7 @@ export default function FiltersClient({ categories }: any) {
           <ul className="divide-y divide-black">
             {categories.map((cat: any) => (
               <li key={cat.id} className="py-3">
-                <button 
+                <button
                   onClick={() => filterByCategory(cat.id)}
                   className="w-full text-left hover:text-blue-600"
                 >
@@ -63,7 +62,7 @@ export default function FiltersClient({ categories }: any) {
               </li>
             ))}
             <li key={0} className="py-3">
-              <button 
+              <button
                 onClick={() => filterByCategory(0)}
                 className="w-full text-left hover:text-blue-600"
               >
