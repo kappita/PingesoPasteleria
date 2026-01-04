@@ -1,7 +1,7 @@
 "use client";
 import { useCart } from "../context/CartContext";
 import { useDeliveryAvailability } from "../hooks/useDeliveryAvailability";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { createHold, clearHold } from "../lib/wcpdd";
 import { initMercadoPago, Wallet } from '@mercadopago/sdk-react';
@@ -14,6 +14,11 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [preferenceId, setPreferenceId] = useState<string | null>(null);
+
+  // REF 1: Para evitar que se liberen los cupos mientras creamos la orden
+  const isProceedingToPayment = useRef(false);
+  // REF 2: Para evitar doble reserva en modo estricto
+  const hasReserved = useRef(false);
 
   const [form, setForm] = useState({
     first_name: "",
@@ -44,6 +49,8 @@ export default function CheckoutPage() {
     try {
       setLoading(true);
       setMessage(null);
+
+      isProceedingToPayment.current = true;
 
       const line_items = cart.map((item) => ({
         product_id: item.id,
@@ -87,49 +94,64 @@ export default function CheckoutPage() {
       setMessage(`✅ Pedido #${orderData.id} creado correctamente.`);
     }
     catch (err: any) {
+      isProceedingToPayment.current = false;
       setMessage("❌ Error al procesar el pedido. Intenta de nuevo.");
     } finally {
       setLoading(false);
     }
   };
 
+// --- LÓGICA DE CUPOS (HOLDS) ---
   useEffect(() => {
-    /*
-    async function reserveSlots() {
+    const reserveSlots = async () => {
+      if (cart.length === 0) return;
       try {
-        for (const item of cart) {
-          if (item.deliveryDate) {
-            await createHold(item.deliveryDate, item.quantity);
+        console.log("🔒 Reservando cupos...");
+        // Reservar en paralelo para eficiencia
+        const promises = cart
+            .filter(item => item.deliveryDate)
+            .map(item => createHold(item.deliveryDate, item.quantity));
+        
+        await Promise.all(promises);
+        await refresh();
+        console.log("✅ Cupos reservados temporalmente");
+      } catch (err) {
+        console.error("Error creando hold:", err);
+      }
+    };
+
+    const releaseHold = async () => {
+      // Solo liberamos si NO estamos en proceso de pago/creación de pedido
+      if (!isProceedingToPayment.current) {
+          try {
+            await clearHold();
+            console.log("🧹 Cupos liberados (usuario salió)");
+          } catch (err) {
+            console.error("Error liberando hold:", err);
           }
+      }
+    };
+
+    // Reservar al montar
+    if (!hasReserved.current && cart.length > 0) {
+        reserveSlots();
+        hasReserved.current = true;
+    }
+
+    // Liberar al cerrar pestaña
+    const handleBeforeUnload = () => {
+        if (!isProceedingToPayment.current) {
+             clearHold(); 
         }
-        await refresh();
-        console.log("✅ Hold temporal creado");
-      } catch (err) {
-        console.error("Error creando hold temporal:", err);
-      }
-    }
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
 
-    async function releaseHold() {
-      try {
-        await clearHold();
-        console.log("🧹 Hold temporal liberado");
-        await refresh();
-      } catch (err) {
-        console.error("Error liberando hold:", err);
-      }
-    }
-
-    // Crear hold al entrar
-    if (cart.length > 0) reserveSlots();
-
-    // Liberar hold al salir o recargar la página
-    window.addEventListener("beforeunload", releaseHold);
-
+    // Cleanup al desmontar
     return () => {
-      releaseHold(); // liberar si el componente se desmonta
-      window.removeEventListener("beforeunload", releaseHold);
-    };*/
-  }, [cart, refresh]);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      releaseHold();
+    };
+  }, []); // Se ejecuta al cambiar el carrito
 
 
   return (
