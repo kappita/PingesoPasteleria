@@ -47,20 +47,6 @@ export default function HomePage() {
             </p>
           </div>
         </div>
-        {/*<a
-          href="https://wa.me/56912345678"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="fixed md:absolute bottom-6 right-6 md:-bottom-4 md:-right-8 z-50 bg-green-500 rounded-full shadow-2xl p-3 transition-transform hover:scale-110 flex items-center justify-center"
-          aria-label="Whatsapp"
-        >
-          <img
-            src="/assets/whatsapp.svg"
-            alt="Whatsapp"
-            className="w-16 h-16"
-            draggable={false}
-          />
-        </a>*/}
         <WhatsappIcon />
       </section>
 

@@ -103,13 +103,12 @@ export default function OrderDetail() {
         <p>
           <strong>Estado:</strong>{" "}
           <span
-            className={`${
-              order.status === "COMPLETED"
+            className={`${order.status === "COMPLETED"
                 ? "text-green-600"
                 : order.status === "CANCELLED"
-                ? "text-red-600"
-                : "text-yellow-600"
-            } font-semibold`}
+                  ? "text-red-600"
+                  : "text-yellow-600"
+              } font-semibold`}
           >
             {order.status}
           </span>

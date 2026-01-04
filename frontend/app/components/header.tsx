@@ -1,12 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import UserMenu from "./UserMenu";
 import Link from "next/link";
 
 const Header = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
   return (
     <>
       <header className="py-4">

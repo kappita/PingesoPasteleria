@@ -3,6 +3,7 @@
 import Form from "next/form";
 import { useEffect, useState } from "react";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
+import { set } from "date-fns";
 
 export default function EditAccountPage() {
   const [user, setUser] = useState<{
@@ -45,7 +46,6 @@ export default function EditAccountPage() {
 
     // Validaciones
     if (newPass || newPass2) {
-      console.log("Cambiando contraseña");
       if (!actualPass) {
         setMessage("Debes ingresar tu contraseña actual para cambiarla.");
         setLoading(false);
@@ -66,6 +66,14 @@ export default function EditAccountPage() {
         setLoading(false);
         return;
       }
+    }
+
+    if (actualPass) {
+      setMessage(
+        "Si solo quieres cambiar otros datos, deja en blanco el campo de la contraseña actual."
+      );
+      setLoading(false);
+      return;
     }
 
     // Construir payload
@@ -148,7 +156,6 @@ export default function EditAccountPage() {
             type={showPassword ? "text" : "password"}
             placeholder="Contraseña"
             name="actualPass"
-            required
             className="w-full mb-4 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
           />
           <button
@@ -167,7 +174,6 @@ export default function EditAccountPage() {
             type={showPassword2 ? "text" : "password"}
             placeholder="Contraseña"
             name="newPass"
-            required
             className="w-full mb-4 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
           />
           <button
@@ -186,7 +192,6 @@ export default function EditAccountPage() {
             type={showPassword3 ? "text" : "password"}
             placeholder="Contraseña"
             name="newPass2"
-            required
             className="w-full mb-4 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
           />
           <button
