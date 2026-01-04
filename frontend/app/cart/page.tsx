@@ -1,11 +1,21 @@
 "use client";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCart } from "../context/CartContext";
+import { useDeliveryAvailability } from "../hooks/useDeliveryAvailability";
+import CartItemRow from "../context/CartItemRow";
 
 export default function CartPage() {
+  const router = useRouter();
   const { cart, removeFromCart, clearCart, updateQuantity } = useCart();
 
+  // 1. LLAMAMOS AL HOOK AQUÍ (Una sola vez para toda la página)
+  const { data, getDailyRemaining, loading } = useDeliveryAvailability();
+
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+  // Opcional: Mostrar loading mientras carga la disponibilidad
+  if (loading) return <div className="p-10 text-center">Cargando disponibilidad...</div>;
 
   return (
     <main className="max-w-4xl mx-auto p-getOrder6">
@@ -23,7 +33,7 @@ export default function CartPage() {
         </div>
       ) : (
         <>
-          <ul className="space-y-4">
+          {/* <ul className="space-y-4">
             {cart.map((item) => (
               <li
                 key={item.id}
@@ -75,9 +85,59 @@ export default function CartPage() {
                 </div>
               </li>
             ))}
+          </ul> */}
+          <ul className="space-y-4">
+            {cart.map((item) => (
+              // 2. RENDERIZAMOS LA FILA CON LA DATA DEL HOOK
+              <CartItemRow
+                key={`${item.id}-${item.deliveryDate}`} // Key única
+                item={item}
+                updateQuantity={updateQuantity}
+                removeFromCart={removeFromCart}
+                // Pasamos las herramientas de validación
+                getDailyRemaining={getDailyRemaining}
+                globalRemaining={data?.global_remaining ?? 9999} // Valor alto por defecto si no ha cargado
+              />
+            ))}
           </ul>
 
-          <div className="mt-8 flex justify-between items-center">
+          {/* Footer del carrito */}
+          <div className="mt-8 border-t pt-8">
+            <div className="flex justify-between items-start">
+                <button
+                onClick={clearCart}
+                className="text-gray-400 hover:text-red-500 text-sm transition-colors mt-2"
+                >
+                Vaciar carrito
+                </button>
+
+                <div className="flex flex-col items-end gap-4 w-full max-w-md">
+                    <div className="flex justify-between w-full text-xl">
+                        <span className="text-gray-600">Total:</span>
+                        <span className="font-bold text-2xl">${total.toFixed(2)}</span>
+                    </div>
+                    
+                    {/* Botón de pago */}
+                    {/* Podrías deshabilitarlo si loading es true */}
+                    <button
+                        onClick={() => router.push("/checkout")}
+                        disabled={loading}
+                        className="bg-pink-500 text-white px-8 py-4 rounded-xl hover:bg-pink-600 font-bold shadow-lg w-full text-center transition-all disabled:opacity-50 disabled:cursor-wait"
+                    >
+                        {loading ? "Verificando disponibilidad..." : "Ir al pago →"}
+                    </button>
+                    
+                    <button 
+                        onClick={() => router.push("/products")}
+                        className="text-pink-500 hover:text-pink-700 text-sm font-medium"
+                    >
+                        Seguir comprando
+                    </button>
+                </div>
+            </div>
+          </div>
+
+          {/* <div className="mt-8 flex justify-between items-center">
             <button
               onClick={clearCart}
               className="border border-gray-300 px-4 py-2 rounded hover:bg-gray-100"
@@ -94,7 +154,7 @@ export default function CartPage() {
                 Ir al pago →
               </Link>
             </div>
-          </div>
+          </div> */}
         </>
       )}
     </main>

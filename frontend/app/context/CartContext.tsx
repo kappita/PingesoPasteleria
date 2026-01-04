@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, ReactNode } from "react";
 
-type CartItem = {
+export type CartItem = {
   id: number;
   name: string;
   price: number;
@@ -20,6 +20,8 @@ type CartContextType = {
   clearCart: () => void;
   updateQuantity: (id: number, quantity: number) => void;
 };
+
+
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 

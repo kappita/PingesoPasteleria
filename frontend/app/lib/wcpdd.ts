@@ -4,6 +4,7 @@ const baseURL = `${process.env.NEXT_PUBLIC_WOOCOMMERCE_URL}/wp-json/wcpdd/v1`;
 
 const wcpdd = axios.create({
   baseURL,
+  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
   },

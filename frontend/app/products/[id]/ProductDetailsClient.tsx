@@ -114,6 +114,7 @@ export default function ProductDetailsClient({ product, variations }: bruh) {
   const [quantity, setQuantity] = useState(1);
   const [message, setMessage] = useState<string | null>(null);
   const [deliveryDate, setDeliveryDate] = useState<string>("");
+  const [addedSuccess, setAddedSuccess] = useState(false);
   const { data, getDailyRemaining, refresh } = useDeliveryAvailability();
   const { addToCart } = useCart();
   const router = useRouter();
@@ -179,7 +180,8 @@ export default function ProductDetailsClient({ product, variations }: bruh) {
       deliveryDate: deliveryDate,
     });
 
-    setMessage("✅ Producto añadido al carrito!");
+    // setMessage("✅ Producto añadido al carrito!");
+    setAddedSuccess(true);
     return true;
   };
 
@@ -189,6 +191,14 @@ export default function ProductDetailsClient({ product, variations }: bruh) {
       router.push("/cart");
     }
   };
+
+  const areAttributesSelected = product.type !== "variable" || product.attributes.every((attr) => selectedAttrs[attr.name]);
+  // 2. Calcular el límite
+  const dailyLimit = deliveryDate ? (getDailyRemaining(deliveryDate) ?? 0) : 0;
+  const globalLimit = data?.global_remaining ?? 0;
+
+  // el número más bajo entre lo que queda hoy y lo que queda en total
+  const maxQuantityAvailable = Math.min(dailyLimit, globalLimit);
 
   return (
     <div className="mx-auto">
@@ -235,8 +245,66 @@ export default function ProductDetailsClient({ product, variations }: bruh) {
                 </select>
               </div>
             ))}
+
+          {/* ---------------- PASO 2: SELECCIÓN DE FECHA ---------------- */}
+          {/* Se bloquea visualmente si no se han seleccionado los atributos */}
+          <div className={`mb-4 ${!areAttributesSelected ? "opacity-50 pointer-events-none grayscale" : ""}`}>
+            <label className="block mb-2 text-lg font-medium">
+              Fecha de entrega:
+            </label>
+            <DeliveryDatePicker 
+                value={deliveryDate} 
+                onChange={(date) => {
+                    setDeliveryDate(date);
+                    setQuantity(1); // Reiniciar cantidad al cambiar fecha para evitar errores
+                }} 
+            />
+            {!areAttributesSelected && (
+              <p className="text-sm text-red-500 mt-1">Primero selecciona las opciones del producto.</p>
+            )}
+          </div>
+          {/* ---------------- PASO 3: CANTIDAD ---------------- */}
+          {/* Se bloquea si no hay fecha seleccionada o si el cupo es 0 */}
+          <div className="mb-4">
+            <div className="flex items-center gap-3">
+              <label htmlFor="quantity" className="text-lg font-medium">
+                Cantidad:
+              </label>
+              <input
+                id="quantity"
+                type="number"
+                min="1"
+                // El maximo es el menor entre el diario y el global
+                max={maxQuantityAvailable}
+                // Deshabilitado si no hay fecha o si no hay cupo
+                disabled={!deliveryDate || maxQuantityAvailable <= 0}
+                value={quantity}
+                onChange={(e) => {
+                  const val = Number(e.target.value);
+                  // Logica de limitacion estricta
+                  if (val > maxQuantityAvailable) setQuantity(maxQuantityAvailable);
+                  else if (val < 1 && val !== 0) setQuantity(1);
+                  else setQuantity(val);
+                }}
+                className={`border rounded-lg p-2 w-20 text-center ${
+                    !deliveryDate ? "bg-gray-100 text-gray-400" : ""
+                }`}
+              />
+            </div>
+            {/* Mensajes de ayuda para el usuario */}
+              {deliveryDate && maxQuantityAvailable > 0 && (
+                  <p className="text-sm text-gray-500 mt-1">
+                      Máximo disponible para esta fecha: {maxQuantityAvailable}
+                  </p>
+              )}
+              {deliveryDate && maxQuantityAvailable <= 0 && (
+                  <p className="text-sm text-red-500 mt-1">
+                      No hay cupo disponible para esta fecha.
+                  </p>
+              )}
+            </div>
           {/* Seleccionar cantidad */}
-          <div className="mb-4 flex items-center gap-3">
+          {/* <div className="mb-4 flex items-center gap-3">
             <label htmlFor="quantity" className="text-lg font-medium">
               Cantidad:
             </label>
@@ -244,17 +312,77 @@ export default function ProductDetailsClient({ product, variations }: bruh) {
               id="quantity"
               type="number"
               min="1"
+              max = {data?.global_remaining || 1}
               value={quantity}
               onChange={(e) => setQuantity(Number(e.target.value))}
               className="border rounded-lg p-2 w-20 text-center"
             />
-          </div>
+          </div> */}
           {/* TODO: AGREGAR SELECCION DE FECHA */}
-          <DeliveryDatePicker value={deliveryDate} onChange={setDeliveryDate} />
+          {/* <DeliveryDatePicker value={deliveryDate} onChange={setDeliveryDate} /> */}
 
           <div className="flex w-[70%] items-stretch justify-between mt-6">
             {/* Botón agregar al carrito */}
-            <button
+            {/* ESTADO 1: Aún no agregado al carrito */}
+            {!addedSuccess ? (
+              <div className="flex flex-col gap-4">
+                {/* Botón Principal: Agregar */}
+                <button
+                  onClick={handleAddToCart}
+                  disabled={!deliveryDate || maxQuantityAvailable <= 0}
+                  className="bg-transparent border-[#E985A7] border-2 text-[#E985A7] px-6 py-3 rounded-full w-full font-bold hover:bg-[#E985A7] hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {(!deliveryDate || maxQuantityAvailable <= 0) 
+                    ? "No disponible" 
+                    : "Agregar al carrito"}
+                </button>
+
+                {/* Botón Secundario: Comprar ahora (Opcional, si quieres mantenerlo antes de agregar) */}
+                <button
+                  onClick={handleBuyNow}
+                  disabled={!deliveryDate || maxQuantityAvailable <= 0}
+                  className="text-gray-500 underline hover:text-[#E985A7] text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  O comprar ahora directamente
+                </button>
+              </div>
+            ) : (
+              
+              /* ESTADO 2: Producto Agregado con éxito */
+              <div className="flex flex-col gap-3 animate-fade-in">
+                
+                {/* Mensaje de éxito integrado visualmente */}
+                <div className="bg-green-100 text-green-700 p-3 rounded-lg text-center mb-2 border border-green-200">
+                  ✅ ¡Se ha agregado con éxito al carrito!
+                </div>
+
+                {/* Botón 1: Ir al carrito (El botón original transformado) */}
+                <button
+                  // TODO: Asegúrate de poner aquí la ruta correcta a tu carrito
+                  onClick={() => router.push("/cart")} 
+                  className="bg-[#E985A7] text-white px-6 py-3 rounded-full w-full font-bold hover:bg-pink-600 transition-colors shadow-md"
+                >
+                  Ir al carrito
+                </button>
+
+                {/* Botón 2: Seguir comprando (Botón nuevo) */}
+                <button
+                  // TODO: Asegúrate de poner aquí la ruta a tu catálogo
+                  onClick={() => router.push('/products')} 
+                  className="bg-gray-100 text-gray-700 px-6 py-3 rounded-full w-full font-medium hover:bg-gray-200 transition-colors"
+                >
+                  Seguir comprando
+                </button>
+              </div>
+            )}
+
+            {/* Manejo de errores (Mensajes que NO son de éxito, ej: 'Falta stock') */}
+            {message && !addedSuccess && (
+              <div className="mt-4 text-center p-3 rounded bg-yellow-100 text-yellow-700">
+                {message}
+              </div>
+            )}
+            {/* <button
               onClick={handleAddToCart}
               className="bg-transparent border-[#E985A7] border-2 text-[#E985A7] px-6 py-3 rounded-full w-[40%]"
             >
@@ -273,7 +401,7 @@ export default function ProductDetailsClient({ product, variations }: bruh) {
               (data?.global_remaining ?? 0) <= 0
                 ? "No disponible"
                 : "Comprar ahora"}
-            </button>
+            </button> */}
           </div>
           {/* Mensaje de confirmación */}
           {message && (
