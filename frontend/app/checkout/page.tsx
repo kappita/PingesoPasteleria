@@ -61,7 +61,7 @@ export default function CheckoutPage() {
         return;
     }
 
-    if (!shippingForm.first_name || !shippingForm.last_name || !shippingForm.email || !shippingForm.address_1 || !shippingForm.city) {
+    if (deliveryType == 'delivery' && (!shippingForm.first_name || !shippingForm.last_name || !shippingForm.email || !shippingForm.address_1 || !shippingForm.city)) {
       setMessage("Completa todos los campos obligatorios")
       console.log(shippingForm)
       return;
