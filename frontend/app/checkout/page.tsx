@@ -16,6 +16,7 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [preferenceId, setPreferenceId] = useState<string | null>(null);
+  const [orderId, setOrderId] = useState<number | null>(null);
 
   // REF 1: Para evitar que se liberen los cupos mientras creamos la orden
   const isProceedingToPayment = useRef(false);
@@ -57,110 +58,7 @@ export default function CheckoutPage() {
     setShippingForm({ ...shippingForm, [e.target.name]: e.target.value });
   };
 
-  if (!cart) return <p>Cargando carrito...</p>;
-
-  const handleCheckout = async () => {
-    if (cart.length === 0) {
-      setMessage("El carrito esta vacío");
-      return;
-    }
-
-    if(!form.first_name || !form.email || !form.address_1 || !form.city || !form.phone){
-        setMessage("Completa todos los campos obligatorios");
-        return;
-    }
-
-    if (deliveryType == 'delivery' && (!shippingForm.first_name || !shippingForm.last_name || !shippingForm.email || !shippingForm.address_1 || !shippingForm.city)) {
-      setMessage("Completa todos los campos obligatorios")
-      console.log(shippingForm)
-      return;
-    }
-
-    try{
-        setLoading(true);
-        setMessage(null);
-
-      isProceedingToPayment.current = true;
-
-      const line_items = cart.map((item) => ({
-        product_id: item.id,
-        variation_id: item.variation_id || undefined,
-        quantity: item.quantity,
-        meta_data: [{
-          id: 1,
-          key: "Fecha de entrega",
-          value: item.deliveryDate
-        }]
-        }));
-
-      const article_descriptions = cart.reduce((acc, cur, idx) => acc + (idx ? "\n" : "") + `${cur.name} &times; ${cur.quantity}`, "");
-      let body:any = {
-              payment_method: "mercadopago",
-              payment_method_title: "Mercado Pago",
-              set_paid: false,
-              fulfillment: 'pickup',
-              billing: form,
-              line_items,
-      }
-
-      if (deliveryType === 'delivery') {
-        body = {
-          ... body,
-          shipping: shippingForm
-        }
-      }
-
-      if (deliveryType === 'pickup') {
-        body = {
-          ...body,
-          shipping_lines: [
-                {"method_id": "local_pickup", "method_title": "Recogida (Local)", "total": "0.00", meta_data: [{"id": 1, "key":"pickup_address", "value":"Lo Errazuriz 879, Región Metropolitana de Santiago, 9201341 Santiago"},
-                  {"id": 2, "key": "pickup_location", "value":"Local"}, {"id":3, "key": "Artículos", "value": article_descriptions}]}
-              ]
-        }
-        }
-
-
-        
-
-      const orderResponse = await fetch("/api/orders", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body),
-      });
-
-      if (!orderResponse.ok) throw new Error("Error al crear la orden en WP");
-      const orderData = await orderResponse.json();
-
-      // Crear preferencia de pago en Mercado Pago
-      const mpRes = await fetch("/api/mercado-pago", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          orderId: orderData.id,
-          items: cart.map(i => ({
-            title: i.name,
-            unit_price: Number(i.price),
-            quantity: i.quantity
-          }))
-        }),
-      });
-
-      const mpData = await mpRes.json();
-      setPreferenceId(mpData.id);
-
-      //clearCart();
-      setMessage(`✅ Pedido #${orderData.id} creado correctamente.`);
-    }
-    catch (err: any) {
-      isProceedingToPayment.current = false;
-      setMessage("❌ Error al procesar el pedido. Intenta de nuevo.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-// --- LÓGICA DE CUPOS (HOLDS) ---
+  // --- LÓGICA DE CUPOS (HOLDS) ---
   useEffect(() => {
     const reserveSlots = async () => {
       if (cart.length === 0) return;
@@ -210,8 +108,192 @@ export default function CheckoutPage() {
       window.removeEventListener("beforeunload", handleBeforeUnload);
       releaseHold();
     };
-  }, []); // Se ejecuta al cambiar el carrito
+  }, []);
 
+  // --- NUEVA FUNCIÓN: CANCELAR ORDEN SI SE ARREPIENTE ---
+  const handleCancelOrder = async () => {
+    if (!orderId) {
+        setPreferenceId(null);
+        return;
+    }
+
+    try {
+        setLoading(true);
+        // Llamada a tu API para borrar el pedido en WP y liberar stock
+        await fetch(`/api/orders?id=${orderId}`, { 
+            method: "DELETE" 
+        });
+        
+        // Limpiamos estados
+        setOrderId(null);
+        setPreferenceId(null);
+        
+        // Volvemos a activar la protección de cupos temporales 
+        // para que sigan reservados mientras edita el carrito
+        isProceedingToPayment.current = false; 
+        
+        setMessage("Pedido anterior cancelado. Puedes modificar tu carrito.");
+    } catch (error) {
+        console.error("Error cancelando orden", error);
+        // Si falla el borrado, igual dejamos al usuario volver, pero avisamos
+        setMessage("Hubo un problema cancelando la orden anterior, pero puedes seguir editando.");
+        setPreferenceId(null); 
+        isProceedingToPayment.current = false;
+    } finally {
+        setLoading(false);
+    }
+  };
+
+
+  if (!cart) return <p>Cargando carrito...</p>;
+
+  const handleCheckout = async () => {
+    if (cart.length === 0) {
+      setMessage("El carrito esta vacío");
+      return;
+    }
+
+    if(!form.first_name || !form.email || !form.address_1 || !form.city || !form.phone){
+        setMessage("Completa todos los campos obligatorios");
+        return;
+    }
+
+    if (deliveryType == 'delivery' && (!shippingForm.first_name || !shippingForm.last_name || !shippingForm.email || !shippingForm.address_1 || !shippingForm.city)) {
+      setMessage("Completa todos los campos obligatorios")
+      console.log(shippingForm)
+      return;
+    }
+
+    try{
+        setLoading(true);
+        setMessage(null);
+
+      isProceedingToPayment.current = true;
+
+      // const line_items = cart.map((item) => ({
+      //   product_id: item.product_id || item.id,
+      //   variation_id: item.variation_id || undefined,
+      //   quantity: item.quantity,
+      //   meta_data: [{
+      //     id: 1,
+      //     key: "Fecha de entrega",
+      //     value: item.deliveryDate
+      //   }]
+      //   }));
+
+      const line_items = cart.map((item) => {
+        
+        // 1. Convertimos los atributos del carrito (Objeto) al formato de API (Array)
+        const variation_attributes = item.attributes 
+            ? Object.entries(item.attributes).map(([key, value]) => ({
+                attribute: key, 
+                value: value 
+              }))
+            : [];
+
+        const atributosComoMeta = item.attributes 
+            ? Object.entries(item.attributes).map(([key, value]) => ({
+                key: key,       
+                value: value   
+              }))
+            : [];
+
+        return {
+          product_id: item.product_id || item.id, // ID del padre
+          variation_id: item.variation_id || undefined, // ID de la variación
+          quantity: item.quantity,
+          
+          variation: variation_attributes,
+          // -----------------------------
+
+          meta_data: [{
+            key: "Fecha de entrega",
+            value: item.deliveryDate
+          }, ...atributosComoMeta]
+        };
+      });
+
+      // 2. RECUPERAR ESTO: Calcular la fecha global (la más próxima)
+      const fechas = cart
+          .map((item) => item.deliveryDate)
+          .filter((d) => d)
+          .sort(); 
+      const fechaGlobal = fechas.length > 0 ? fechas[0] : "";
+
+      const article_descriptions = cart.reduce((acc, cur, idx) => acc + (idx ? "\n" : "") + `${cur.name} &times; ${cur.quantity}`, "");
+      let body:any = {
+              payment_method: "mercadopago",
+              payment_method_title: "Mercado Pago",
+              set_paid: false,
+              fulfillment: 'pickup',
+              billing: form,
+              line_items,
+              meta_data: [
+                {
+                  key: "_wcpdd_delivery_date",
+                  value: fechaGlobal
+                }
+              ]
+      }
+
+      if (deliveryType === 'delivery') {
+        body = {
+          ... body,
+          shipping: shippingForm
+        }
+      }
+
+      if (deliveryType === 'pickup') {
+        body = {
+          ...body,
+          shipping_lines: [
+                {"method_id": "local_pickup", "method_title": "Recogida (Local)", "total": "0.00", meta_data: [{"id": 1, "key":"pickup_address", "value":"Lo Errazuriz 879, Región Metropolitana de Santiago, 9201341 Santiago"},
+                  {"id": 2, "key": "pickup_location", "value":"Local"}, {"id":3, "key": "Artículos", "value": article_descriptions}]}
+              ]
+        }
+        }
+
+
+        
+
+      const orderResponse = await fetch("/api/orders", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+      });
+
+      if (!orderResponse.ok) throw new Error("Error al crear la orden en WP");
+      const orderData = await orderResponse.json();
+
+      setOrderId(orderData.id);
+
+      // Crear preferencia de pago en Mercado Pago
+      const mpRes = await fetch("/api/mercado-pago", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          orderId: orderData.id,
+          items: cart.map(i => ({
+            title: i.name,
+            unit_price: Number(i.price),
+            quantity: i.quantity
+          }))
+        }),
+      });
+
+      const mpData = await mpRes.json();
+      setPreferenceId(mpData.id);
+
+      //clearCart();
+      setMessage(`✅ Pedido #${orderData.id} creado correctamente.`);
+    }
+    catch (err: any) {
+      isProceedingToPayment.current = false;
+      setMessage("❌ Error al procesar el pedido. Intenta de nuevo.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <main className="p-8 w-[80%] flex flex-col">
@@ -414,16 +496,16 @@ export default function CheckoutPage() {
             </p>
 
             {preferenceId ? (
-              <div className="mt-6 border-t pt-6">
+              <div key={preferenceId} className="mt-6 border-t pt-6">
                 <Wallet
                   initialization={{ preferenceId }}
                 />
                 <button
-                    onClick={handleCheckout}
+                    onClick={handleCancelOrder}
                     disabled={loading}
                     className="mt-6 bg-[#E985A7] shadow-md text-white px-6 py-3 rounded-lg hover:bg-pink-700 transition disabled:opacity-50"
                 >
-                  Modificar pedido
+                  Cancelar y Modificar pedido
                 </button>
               </div>
             ) : (

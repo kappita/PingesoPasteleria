@@ -172,6 +172,8 @@ export default function ProductDetailsClient({ product, variations }: bruh) {
     console.log("La fecha de entrega es", deliveryDate);
     addToCart({
       id: item.id,
+      product_id: product.id,
+      variation_id: currentVariation ? currentVariation.id : undefined,
       name: product.name,
       price: parseFloat(item.price),
       quantity,
@@ -303,23 +305,7 @@ export default function ProductDetailsClient({ product, variations }: bruh) {
                   </p>
               )}
             </div>
-          {/* Seleccionar cantidad */}
-          {/* <div className="mb-4 flex items-center gap-3">
-            <label htmlFor="quantity" className="text-lg font-medium">
-              Cantidad:
-            </label>
-            <input
-              id="quantity"
-              type="number"
-              min="1"
-              max = {data?.global_remaining || 1}
-              value={quantity}
-              onChange={(e) => setQuantity(Number(e.target.value))}
-              className="border rounded-lg p-2 w-20 text-center"
-            />
-          </div> */}
           {/* TODO: AGREGAR SELECCION DE FECHA */}
-          {/* <DeliveryDatePicker value={deliveryDate} onChange={setDeliveryDate} /> */}
 
           <div className="flex w-[70%] items-stretch justify-between mt-6">
             {/* Botón agregar al carrito */}
@@ -382,26 +368,6 @@ export default function ProductDetailsClient({ product, variations }: bruh) {
                 {message}
               </div>
             )}
-            {/* <button
-              onClick={handleAddToCart}
-              className="bg-transparent border-[#E985A7] border-2 text-[#E985A7] px-6 py-3 rounded-full w-[40%]"
-            >
-              {!deliveryDate ||
-              (getDailyRemaining(deliveryDate) ?? 0) <= 0 ||
-              (data?.global_remaining ?? 0) <= 0
-                ? "No disponible"
-                : "Agregar al carrito"}
-            </button>
-            <button
-              onClick={handleBuyNow}
-              className="bg-[#E985A7] rounded-full text-white px-6 py-3  hover:bg-pink-600 w-[40%]"
-            >
-              {!deliveryDate ||
-              (getDailyRemaining(deliveryDate) ?? 0) <= 0 ||
-              (data?.global_remaining ?? 0) <= 0
-                ? "No disponible"
-                : "Comprar ahora"}
-            </button> */}
           </div>
           {/* Mensaje de confirmación */}
           {message && (

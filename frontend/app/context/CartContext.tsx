@@ -4,6 +4,7 @@ import { createContext, useContext, useState, ReactNode } from "react";
 
 export type CartItem = {
   id: number;
+  product_id?: number;
   name: string;
   price: number;
   quantity: number;
