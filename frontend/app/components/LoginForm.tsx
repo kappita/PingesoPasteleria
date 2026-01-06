@@ -56,7 +56,7 @@ export default function LoginForm() {
           
         <Form action={handleSubmit} className="space-y-6">
           <div className="flex flex-col items-center">
-            <div className="w-[80%]">
+            <div className="w-[90%]">
               <label className="block text-sm font-bold text-gray-700 mb-1 pl-1">
                 Nombre de usuario
               </label>
@@ -72,7 +72,7 @@ export default function LoginForm() {
 
 
           <div className="flex flex-col items-center">
-            <div className="w-[80%]">
+            <div className="w-[90%]">
               <label className="block text-sm font-bold text-gray-700 mb-1 pl-1">
                 Contraseña
               </label>
