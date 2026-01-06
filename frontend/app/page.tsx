@@ -19,7 +19,7 @@ const catalogItems = [
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center bg-[#FFF1DB]">
+    <main className="min-h-screen flex flex-col items-center justify-center ">
       <section className="flex justify-center items-center relative mt-20">
         <div className="flex flex-col md:flex-row items-center w-[97%] max-w-6xl mx-auto">
           <div className="flex-shrink-0 flex items-center justify-center w-[430px] h-[430px] relative z-10">
