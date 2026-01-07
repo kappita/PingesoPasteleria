@@ -68,7 +68,7 @@ export default function DeliveryDatePicker({ value, onChange }: Props) {
           </Button>
         </PopoverTrigger>
 
-        <PopoverContent className="p-0 bg-[#FFF1DB]">
+        <PopoverContent className="p-0 bg-white">
           <Calendar
             mode="single"
             selected={selectedDate}
