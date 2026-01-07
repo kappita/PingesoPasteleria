@@ -16,7 +16,7 @@ return (
       <nav className="w-64 p-6 flex flex-col gap-2 min-h-screen sticky top-24 shrink-0">
         {/* Mi Perfil activo */}
         <Link 
-          href="/my-account" 
+          href="/my-account/orders" 
           className="flex items-center gap-3 p-4 text-3xl text-gray-800"
         >
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
