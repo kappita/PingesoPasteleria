@@ -23,7 +23,7 @@ export default async function OrdersPage() {
     console.log(orders);
     
     return (
-      <main className="space-y-6 mt-8">
+      <main className="space-y-6 mt-5">
         {/* Título con línea debajo */}
         <div>
           <h1 className="text-4xl text-gray-800 mb-2">
