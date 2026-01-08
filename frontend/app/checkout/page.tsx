@@ -312,7 +312,7 @@ return (
         <div className="space-y-8">
           {/* Datos facturación */}
           <div className="space-y-6">
-            <h2 className="text-xl font-bold text-gray-900 border-b border-gray-200 pb-2">
+            <h2 className="text-xl font-semibold text-gray-900 border-b border-gray-200 pb-2">
               Datos de facturación
             </h2>
             <div className="space-y-4">
@@ -394,7 +394,7 @@ return (
 
           {/* Tipo entrega */}
           <div>
-            <h2 className="text-xl font-bold text-gray-900 border-b border-gray-200 pb-2 mb-6">
+            <h2 className="text-xl font-semibold text-gray-900 border-b border-gray-200 pb-2 mb-6">
               Tipo de entrega
             </h2>
             <div className="flex flex-col sm:flex-row gap-4">
@@ -469,17 +469,15 @@ return (
                     className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#E985A7]/50 focus:border-transparent shadow-sm transition-all"
                     required
                   />
-                  <div className="grid grid-cols-2 gap-4">
-                    <input
-                      type="text"
-                      name="shipping_city"
-                      placeholder="Comuna *"
-                      value={shippingForm.city}
-                      onChange={handleShippingChange}
-                      className="p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#E985A7]/50 focus:border-transparent shadow-sm transition-all"
-                      required
-                    />
-                  </div>
+                  <input
+                    type="text"
+                    name="shipping_city"
+                    placeholder="Comuna *"
+                    value={shippingForm.city}
+                    onChange={handleShippingChange}
+                    className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#E985A7]/50 focus:border-transparent shadow-sm transition-all"
+                    required
+                  />
                 </div>
               </div>
             ) : (
@@ -502,7 +500,7 @@ return (
 
         {/* Columna derecha: Productos + Total + Botón */}
         <div className="space-y-6">
-          {loadingAvailability === true ? (
+          {/* {loadingAvailability === true ? (
             <div className="p-6 border-2 border-dashed border-gray-300 rounded-2xl text-center">
               <p className="text-gray-500">Cargando disponibilidad global...</p>
             </div>
@@ -517,10 +515,12 @@ return (
             <div className="p-6 border-2 border-dashed border-red-200 rounded-2xl bg-red-50 text-center">
               <p className="text-red-600 font-medium">No disponible</p>
             </div>
-          )}
+          )} */}
 
-          <div className="border border-gray-200 rounded-2xl p-6 space-y-4">
-            <h2 className="text-xl font-bold text-gray-900">Productos</h2>
+          <div className="space-y-4">
+            <h2 className="text-xl font-semibold text-gray-900 border-b border-gray-200 pb-2">
+              Productos
+            </h2>
             <div className="space-y-4 divide-y divide-gray-100">
               {cart.map((item: any) => (
                 <div key={`${item.id}-${item.variation_id ?? "base"}`} className="pt-4 first:pt-0 grid grid-cols-2 gap-4 items-end">
@@ -535,7 +535,7 @@ return (
                   </div>
                   <div className="text-right">
                     <p className="text-sm font-medium text-gray-600">× {item.quantity}</p>
-                    <p className="text-xl font-bold text-gray-900">${(item.price * item.quantity).toFixed(2)}</p>
+                    <p className="text-xl font-semibold text-gray-900">${(item.price * item.quantity)}</p>
                   </div>
                 </div>
               ))}
@@ -545,8 +545,8 @@ return (
             <div className="pt-6 mt-6 border-t border-gray-200 space-y-2">
               <div className="flex justify-between text-lg">
                 <span>Total</span>
-                <span className="font-bold text-2xl text-gray-900">
-                  ${cart.reduce((acc: number, item: any) => acc + item.price * item.quantity, 0).toFixed(2)}
+                <span className="font-semibold text-xl text-gray-900">
+                  ${cart.reduce((acc: number, item: any) => acc + item.price * item.quantity, 0)}
                 </span>
               </div>
             </div>
@@ -565,13 +565,15 @@ return (
               </button>
             </div>
           ) : (
-            <button
-              onClick={handleCheckout}
-              disabled={loading}
-              className="w-full bg-[#E985A7] text-white px-6 py-4 rounded-2xl font-bold text-lg shadow-lg hover:shadow-[#E985A7]/40 hover:bg-[#d96b8f] hover:scale-[1.02] transition-all disabled:opacity-50"
-            >
-              {loading ? "Generando orden..." : "Pagar 💳"}
-            </button>
+            <div className="flex justify-center">
+              <button
+                onClick={handleCheckout}
+                disabled={loading}
+                className="w-[50%]  bg-[#E985A7] text-white px-6 py-3 rounded-4xl font-semibold text-lg shadow-lg hover:shadow-[#E985A7]/40 hover:bg-[#d96b8f] hover:scale-[1.02] transition-all disabled:opacity-50"
+              >
+                {loading ? "Generando orden..." : "Pagar"}
+              </button>
+            </div>
           )}
         </div>
       </div>
