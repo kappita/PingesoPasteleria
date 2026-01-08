@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Form from "next/form";
+import Link from "next/link";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 
 export default function LoginForm() {
@@ -110,12 +111,13 @@ export default function LoginForm() {
               >
                 {loading ? "Cargando..." : "Ingresar"}
               </button>
-              <button
+              <Link
+                href="/register"
                 type="button"
-                className="flex-1 bg-[#FFC05B] hover:bg-[#E6A943] text-white py-4 px-8 rounded-[24px] shadow-xl hover:shadow-2xl transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#FFC05B]/50"
+                className="flex-1 bg-[#FFC05B] hover:bg-[#E6A943] text-white py-4 px-8 rounded-[24px] shadow-xl hover:shadow-2xl transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 text-center focus:ring-[#FFC05B]/50"
               >
                 Registrarse
-              </button>
+              </Link>
             </div>
 
 
