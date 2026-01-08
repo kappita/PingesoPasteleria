@@ -19,7 +19,7 @@ const Header = () => {
               />
             </div>
 
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-3 translate-y-18">
               <a
                 href="https://instagram.com"
                 target="_blank"
@@ -67,22 +67,10 @@ const Header = () => {
             Tienda
           </Link>
           <Link
-            href="/us"
-            className="flex items-center justify-center text-center text-white hover:text-pink-100 font-medium transition h-12 w-40"
-          >
-            Nosotros
-          </Link>
-          <Link
             href="/events"
             className="flex items-center justify-center text-center text-white hover:text-pink-100 font-medium  transition h-8 w-40"
           >
             Eventos
-          </Link>
-          <Link
-            href="/cards"
-            className="flex items-center justify-center text-center text-white hover:text-pink-100 font-medium transition h-12 w-40"
-          >
-            Cartas
           </Link>
         </div>
       </nav>
