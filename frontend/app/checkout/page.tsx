@@ -66,9 +66,9 @@ export default function CheckoutPage() {
         console.log("🔒 Reservando cupos...");
         // Reservar en paralelo para eficiencia
         const promises = cart
-            .filter(item => item.deliveryDate)
-            .map(item => createHold(item.deliveryDate, item.quantity));
-        
+          .filter(item => item.deliveryDate)
+          .map(item => createHold(item.deliveryDate, item.quantity));
+
         await Promise.all(promises);
         await refresh();
         console.log("✅ Cupos reservados temporalmente");
@@ -80,26 +80,26 @@ export default function CheckoutPage() {
     const releaseHold = async () => {
       // Solo liberamos si NO estamos en proceso de pago/creación de pedido
       if (!isProceedingToPayment.current) {
-          try {
-            await clearHold();
-            console.log("🧹 Cupos liberados (usuario salió)");
-          } catch (err) {
-            console.error("Error liberando hold:", err);
-          }
+        try {
+          await clearHold();
+          console.log("🧹 Cupos liberados (usuario salió)");
+        } catch (err) {
+          console.error("Error liberando hold:", err);
+        }
       }
     };
 
     // Reservar al montar
     if (!hasReserved.current && cart.length > 0) {
-        reserveSlots();
-        hasReserved.current = true;
+      reserveSlots();
+      hasReserved.current = true;
     }
 
     // Liberar al cerrar pestaña
     const handleBeforeUnload = () => {
-        if (!isProceedingToPayment.current) {
-             clearHold(); 
-        }
+      if (!isProceedingToPayment.current) {
+        clearHold();
+      }
     };
     window.addEventListener("beforeunload", handleBeforeUnload);
 
@@ -113,34 +113,34 @@ export default function CheckoutPage() {
   // --- NUEVA FUNCIÓN: CANCELAR ORDEN SI SE ARREPIENTE ---
   const handleCancelOrder = async () => {
     if (!orderId) {
-        setPreferenceId(null);
-        return;
+      setPreferenceId(null);
+      return;
     }
 
     try {
-        setLoading(true);
-        // Llamada a tu API para borrar el pedido en WP y liberar stock
-        await fetch(`/api/orders?id=${orderId}`, { 
-            method: "DELETE" 
-        });
-        
-        // Limpiamos estados
-        setOrderId(null);
-        setPreferenceId(null);
-        
-        // Volvemos a activar la protección de cupos temporales 
-        // para que sigan reservados mientras edita el carrito
-        isProceedingToPayment.current = false; 
-        
-        setMessage("Pedido anterior cancelado. Puedes modificar tu carrito.");
+      setLoading(true);
+      // Llamada a tu API para borrar el pedido en WP y liberar stock
+      await fetch(`/api/orders?id=${orderId}`, {
+        method: "DELETE"
+      });
+
+      // Limpiamos estados
+      setOrderId(null);
+      setPreferenceId(null);
+
+      // Volvemos a activar la protección de cupos temporales 
+      // para que sigan reservados mientras edita el carrito
+      isProceedingToPayment.current = false;
+
+      setMessage("Pedido anterior cancelado. Puedes modificar tu carrito.");
     } catch (error) {
-        console.error("Error cancelando orden", error);
-        // Si falla el borrado, igual dejamos al usuario volver, pero avisamos
-        setMessage("Hubo un problema cancelando la orden anterior, pero puedes seguir editando.");
-        setPreferenceId(null); 
-        isProceedingToPayment.current = false;
+      console.error("Error cancelando orden", error);
+      // Si falla el borrado, igual dejamos al usuario volver, pero avisamos
+      setMessage("Hubo un problema cancelando la orden anterior, pero puedes seguir editando.");
+      setPreferenceId(null);
+      isProceedingToPayment.current = false;
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
   };
 
@@ -153,9 +153,9 @@ export default function CheckoutPage() {
       return;
     }
 
-    if(!form.first_name || !form.email || !form.address_1 || !form.city || !form.phone){
-        setMessage("Completa todos los campos obligatorios");
-        return;
+    if (!form.first_name || !form.email || !form.address_1 || !form.city || !form.phone) {
+      setMessage("Completa todos los campos obligatorios");
+      return;
     }
 
     if (deliveryType == 'delivery' && (!shippingForm.first_name || !shippingForm.last_name || !shippingForm.email || !shippingForm.address_1 || !shippingForm.city)) {
@@ -164,9 +164,9 @@ export default function CheckoutPage() {
       return;
     }
 
-    try{
-        setLoading(true);
-        setMessage(null);
+    try {
+      setLoading(true);
+      setMessage(null);
 
       isProceedingToPayment.current = true;
 
@@ -182,27 +182,27 @@ export default function CheckoutPage() {
       //   }));
 
       const line_items = cart.map((item) => {
-        
-        // 1. Convertimos los atributos del carrito (Objeto) al formato de API (Array)
-        const variation_attributes = item.attributes 
-            ? Object.entries(item.attributes).map(([key, value]) => ({
-                attribute: key, 
-                value: value 
-              }))
-            : [];
 
-        const atributosComoMeta = item.attributes 
-            ? Object.entries(item.attributes).map(([key, value]) => ({
-                key: key,       
-                value: value   
-              }))
-            : [];
+        // 1. Convertimos los atributos del carrito (Objeto) al formato de API (Array)
+        const variation_attributes = item.attributes
+          ? Object.entries(item.attributes).map(([key, value]) => ({
+            attribute: key,
+            value: value
+          }))
+          : [];
+
+        const atributosComoMeta = item.attributes
+          ? Object.entries(item.attributes).map(([key, value]) => ({
+            key: key,
+            value: value
+          }))
+          : [];
 
         return {
           product_id: item.product_id || item.id, // ID del padre
           variation_id: item.variation_id || undefined, // ID de la variación
           quantity: item.quantity,
-          
+
           variation: variation_attributes,
           // -----------------------------
 
@@ -215,30 +215,30 @@ export default function CheckoutPage() {
 
       // 2. RECUPERAR ESTO: Calcular la fecha global (la más próxima)
       const fechas = cart
-          .map((item) => item.deliveryDate)
-          .filter((d) => d)
-          .sort(); 
+        .map((item) => item.deliveryDate)
+        .filter((d) => d)
+        .sort();
       const fechaGlobal = fechas.length > 0 ? fechas[0] : "";
 
       const article_descriptions = cart.reduce((acc, cur, idx) => acc + (idx ? "\n" : "") + `${cur.name} &times; ${cur.quantity}`, "");
-      let body:any = {
-              payment_method: "mercadopago",
-              payment_method_title: "Mercado Pago",
-              set_paid: false,
-              fulfillment: 'pickup',
-              billing: form,
-              line_items,
-              meta_data: [
-                {
-                  key: "_wcpdd_delivery_date",
-                  value: fechaGlobal
-                }
-              ]
+      let body: any = {
+        payment_method: "mercadopago",
+        payment_method_title: "Mercado Pago",
+        set_paid: false,
+        fulfillment: 'pickup',
+        billing: form,
+        line_items,
+        meta_data: [
+          {
+            key: "_wcpdd_delivery_date",
+            value: fechaGlobal
+          }
+        ]
       }
 
       if (deliveryType === 'delivery') {
         body = {
-          ... body,
+          ...body,
           shipping: shippingForm
         }
       }
@@ -247,19 +247,21 @@ export default function CheckoutPage() {
         body = {
           ...body,
           shipping_lines: [
-                {"method_id": "local_pickup", "method_title": "Recogida (Local)", "total": "0.00", meta_data: [{"id": 1, "key":"pickup_address", "value":"Lo Errazuriz 879, Región Metropolitana de Santiago, 9201341 Santiago"},
-                  {"id": 2, "key": "pickup_location", "value":"Local"}, {"id":3, "key": "Artículos", "value": article_descriptions}]}
-              ]
+            {
+              "method_id": "local_pickup", "method_title": "Recogida (Local)", "total": "0.00", meta_data: [{ "id": 1, "key": "pickup_address", "value": "Lo Errazuriz 879, Región Metropolitana de Santiago, 9201341 Santiago" },
+              { "id": 2, "key": "pickup_location", "value": "Local" }, { "id": 3, "key": "Artículos", "value": article_descriptions }]
+            }
+          ]
         }
-        }
+      }
 
 
-        
+
 
       const orderResponse = await fetch("/api/orders", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body),
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
       });
 
       if (!orderResponse.ok) throw new Error("Error al crear la orden en WP");
@@ -276,7 +278,8 @@ export default function CheckoutPage() {
           items: cart.map(i => ({
             title: i.name,
             unit_price: Number(i.price),
-            quantity: i.quantity
+            quantity: i.quantity,
+            currency_id: "CLP"
           }))
         }),
       });
@@ -310,54 +313,54 @@ export default function CheckoutPage() {
           <div>
             <h2 className="text-xl font-semibold mb-4">Datos de facturación</h2>
             <div className="space-y-3">
-                <input
+              <input
                 type="text"
                 name="first_name"
                 placeholder="Nombre"
                 value={form.first_name}
                 onChange={handleChange}
                 className="border rounded p-2 w-full"
-                />
-                <input
+              />
+              <input
                 type="text"
                 name="last_name"
                 placeholder="Apellido"
                 value={form.last_name}
                 onChange={handleChange}
                 className="border rounded p-2 w-full"
-                />
-                <input
+              />
+              <input
                 type="email"
                 name="email"
                 placeholder="Correo electrónico"
                 value={form.email}
                 onChange={handleChange}
                 className="border rounded p-2 w-full"
-                />
-                <input
+              />
+              <input
                 type="text"
                 name="address_1"
                 placeholder="Dirección"
                 value={form.address_1}
                 onChange={handleChange}
                 className="border rounded p-2 w-full"
-                />
-                <input
+              />
+              <input
                 type="text"
                 name="city"
                 placeholder="Ciudad"
                 value={form.city}
                 onChange={handleChange}
                 className="border rounded p-2 w-full"
-                />
-                <input
+              />
+              <input
                 type="text"
                 name="phone"
                 placeholder="Número de celular o teléfono"
                 value={form.phone}
                 onChange={handleChange}
                 className="border rounded p-2 w-full"
-                />
+              />
             </div>
 
             <h2 className="text-xl font-semibold mb-4">Tipo de entrega</h2>
@@ -396,46 +399,46 @@ export default function CheckoutPage() {
             {deliveryType === 'delivery' ? (
               <div className="space-y-3">
                 <input
-                type="text"
-                name="first_name"
-                placeholder="Nombre"
-                value={shippingForm.first_name}
-                onChange={handleShippingChange}
-                className="border rounded p-2 w-full"
+                  type="text"
+                  name="first_name"
+                  placeholder="Nombre"
+                  value={shippingForm.first_name}
+                  onChange={handleShippingChange}
+                  className="border rounded p-2 w-full"
                 />
                 <input
-                type="text"
-                name="last_name"
-                placeholder="Apellido"
-                value={shippingForm.last_name}
-                onChange={handleShippingChange}
-                className="border rounded p-2 w-full"
+                  type="text"
+                  name="last_name"
+                  placeholder="Apellido"
+                  value={shippingForm.last_name}
+                  onChange={handleShippingChange}
+                  className="border rounded p-2 w-full"
                 />
                 <input
-                type="email"
-                name="email"
-                placeholder="Correo electrónico"
-                value={shippingForm.email}
-                onChange={handleShippingChange}
-                className="border rounded p-2 w-full"
+                  type="email"
+                  name="email"
+                  placeholder="Correo electrónico"
+                  value={shippingForm.email}
+                  onChange={handleShippingChange}
+                  className="border rounded p-2 w-full"
                 />
                 <input
-                type="text"
-                name="address_1"
-                placeholder="Dirección"
-                value={shippingForm.address_1}
-                onChange={handleShippingChange}
-                className="border rounded p-2 w-full"
+                  type="text"
+                  name="address_1"
+                  placeholder="Dirección"
+                  value={shippingForm.address_1}
+                  onChange={handleShippingChange}
+                  className="border rounded p-2 w-full"
                 />
                 <input
-                type="text"
-                name="city"
-                placeholder="Ciudad"
-                value={shippingForm.city}
-                onChange={handleShippingChange}
-                className="border rounded p-2 w-full"
+                  type="text"
+                  name="city"
+                  placeholder="Ciudad"
+                  value={shippingForm.city}
+                  onChange={handleShippingChange}
+                  className="border rounded p-2 w-full"
                 />
-            </div>
+              </div>
             ) : (
               <div className="mb-6 p-4 border rounded-lg bg-white">
                 <p className="text-black">
@@ -501,9 +504,9 @@ export default function CheckoutPage() {
                   initialization={{ preferenceId }}
                 />
                 <button
-                    onClick={handleCancelOrder}
-                    disabled={loading}
-                    className="mt-6 bg-[#E985A7] shadow-md text-white px-6 py-3 rounded-lg hover:bg-pink-700 transition disabled:opacity-50"
+                  onClick={handleCancelOrder}
+                  disabled={loading}
+                  className="mt-6 bg-[#E985A7] shadow-md text-white px-6 py-3 rounded-lg hover:bg-pink-700 transition disabled:opacity-50"
                 >
                   Cancelar y Modificar pedido
                 </button>

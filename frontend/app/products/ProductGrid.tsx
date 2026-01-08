@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import Image from "next/image";
 
 export default function ProductGrid({ products, currentPage, totalPages }: any) {
   const searchParams = useSearchParams();
@@ -18,7 +19,7 @@ export default function ProductGrid({ products, currentPage, totalPages }: any) 
             href={`/products/${product.id}`}
             className="border rounded-2xl flex-col items-center shadow-[2px_3px_8.9px_0px_rgba(0,0,0,0.25)] pb-4 hover:shadow-lg transition block h-[40vh]"
           >
-            <img
+            <Image
               src={product.images[0]?.src}
               alt={product.name}
               className="w-full h-[80%] object-cover rounded-lg rounded-b-none"

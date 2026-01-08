@@ -9,7 +9,6 @@ const client = new MercadoPagoConfig({
 
 export async function POST(req: Request) {
   const { items, orderId } = await req.json();
-  console.log(items, orderId);
 
   try {
     const preference = new Preference(client);
