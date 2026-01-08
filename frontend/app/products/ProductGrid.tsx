@@ -19,11 +19,15 @@ export default function ProductGrid({ products, currentPage, totalPages }: any) 
             href={`/products/${product.id}`}
             className="border rounded-2xl flex-col items-center shadow-[2px_3px_8.9px_0px_rgba(0,0,0,0.25)] pb-4 hover:shadow-lg transition block h-[40vh]"
           >
-            <Image
-              src={product.images[0]?.src}
-              alt={product.name}
-              className="w-full h-[80%] object-cover rounded-lg rounded-b-none"
-            />
+            <div className="relative w-full h-[80%]">
+              <Image
+                src={product.images[0]?.src}
+                alt={product.name}
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                className="object-cover rounded-t-2xl"
+              />
+            </div>
             <h2 className="text-lg font-medium mt-3 w-full text-center">{product.name}</h2>
             <p className="text-black font-medium text-lg text-center">Desde <span className="text-2xl">${product.price} CLP</span></p>
           </Link>
