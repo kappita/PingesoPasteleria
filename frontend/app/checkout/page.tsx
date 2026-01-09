@@ -374,7 +374,7 @@ return (
                   type="text"
                   name="state"
                   placeholder="Región *"
-                  value={form.state}
+                  //value={form.state}
                   onChange={handleChange}
                   className="p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#E985A7]/50 focus:border-transparent shadow-sm transition-all"
                   required
