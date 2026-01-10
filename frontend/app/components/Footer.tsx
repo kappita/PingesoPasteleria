@@ -11,9 +11,9 @@ export default function Footer() {
       {/* Menú horizontal central */}
       <nav className="flex space-x-12 mb-8">
         <a href="#inicio" className="font-medium text-lg underline underline-offset-4 hover:text-[#faecd8] transition">Inicio</a>
-        <a href="#desayunos" className="font-medium text-lg underline underline-offset-4 hover:text-[#faecd8] transition">Desayunos</a>
-        <a href="#catering" className="font-medium text-lg underline underline-offset-4 hover:text-[#faecd8] transition">Catering</a>
-        <a href="#pasteleria" className="font-medium text-lg underline underline-offset-4 hover:text-[#faecd8] transition">Pastelería</a>
+        <a href="/products?page=1&category=33" className="font-medium text-lg underline underline-offset-4 hover:text-[#faecd8] transition">Pastelería</a>
+        <a href="/products?page=1&category=34" className="font-medium text-lg underline underline-offset-4 hover:text-[#faecd8] transition">Catering</a>
+        <a href="/products?page=1&category=18" className="font-medium text-lg underline underline-offset-4 hover:text-[#faecd8] transition">Tortas</a>
       </nav>
 
     </footer>

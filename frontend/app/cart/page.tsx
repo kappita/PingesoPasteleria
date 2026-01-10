@@ -18,15 +18,15 @@ export default function CartPage() {
   if (loading) return <div className="p-10 text-center">Cargando disponibilidad...</div>;
 
   return (
-    <main className="max-w-4xl mx-auto p-getOrder6">
+    <main className="w-[50%] p-16 mx-auto p-getOrder6">
       <h1 className="text-3xl font-bold mb-8">Tu Carrito</h1>
 
       {cart.length === 0 ? (
-        <div className="text-center">
+        <div className="text-center mb-24">
           <p className="text-gray-600 mb-6">Tu carrito está vacío 🛍️</p>
           <Link
             href="/products"
-            className="bg-pink-500 text-white px-6 py-3 rounded-xl hover:bg-pink-600"
+            className="w-[50%]  bg-[#E985A7] text-white px-6 py-3 rounded-4xl font-semibold text-lg shadow-lg hover:shadow-[#E985A7]/40 hover:bg-[#d96b8f] hover:scale-[1.02] transition-all disabled:opacity-50"
           >
             Ir a comprar
           </Link>
@@ -122,7 +122,7 @@ export default function CartPage() {
                     <button
                         onClick={() => router.push("/checkout")}
                         disabled={loading}
-                        className="bg-pink-500 text-white px-8 py-4 rounded-xl hover:bg-pink-600 font-bold shadow-lg w-full text-center transition-all disabled:opacity-50 disabled:cursor-wait"
+                        className="w-[50%]  bg-[#E985A7] text-white px-6 py-3 rounded-4xl font-semibold text-lg shadow-lg hover:shadow-[#E985A7]/40 hover:bg-[#d96b8f] hover:scale-[1.02] transition-all disabled:opacity-50"
                     >
                         {loading ? "Verificando disponibilidad..." : "Ir al pago →"}
                     </button>

@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { getCustomerOrders } from "@/app/lib/graphql/queries/getCustomerOrders";
 import { redirect } from "next/navigation";
 import { getViewer } from "@/app/lib/graphql/queries/getViewer";
+import ClickableOrdersTable from "./ClickableOrdersTable";
 import Link from "next/link";
 
 export default async function OrdersPage() {
@@ -18,63 +19,69 @@ export default async function OrdersPage() {
 
     const ordersData = await getCustomerOrders(token, email, 10);
     const orders = ordersData?.nodes ?? [];
+
+    console.log(orders);
+    
     return (
-      <main>
-        <h1 className="font-bold text-center mb-5 text-[1.4rem]">
-          Mis pedidos
-        </h1>
+      <main className="space-y-6 mt-5">
+        {/* Título con línea debajo */}
+        <div>
+          <h1 className="text-4xl text-gray-800 mb-2">
+            Historial de Pedidos
+          </h1>
+          <hr className="border-gray-300 w-[45%]" />
+        </div>
 
-        <table className="border-2">
-          <thead className="border-b-1">
-            <tr className="uppercase">
-              <th className="py-2 px-4">Pedido</th>
-              <th className="py-2 px-4">Fecha</th>
-              <th className="py-2 px-4">Estado</th>
-              <th className="py-2 px-4">Total</th>
-              <th className="py-2 px-4">Acciones</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {orders.length === 0 ? (
-              <tr>
-                <td colSpan={5} className="text-center">
-                  No se encontraron pedidos.
-                </td>
+        {/* Tabla */}
+        <div className="overflow-x-auto">
+          <table className="w-full bg-white rounded-2xl shadow-xl border border-gray-200/50">
+            <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
+              <tr className="text-center">
+                <th className="py-4 px-6 font-semibold text-gray-700 text-sm uppercase tracking-wide rounded-tl-2xl">
+                  ID Pedido
+                </th>
+                <th className="py-4 px-6 font-semibold text-gray-700 text-sm uppercase tracking-wide">
+                  Fecha
+                </th>
+                <th className="py-4 px-6 font-semibold text-gray-700 text-sm uppercase tracking-wide">
+                  N° Productos
+                </th>
+                <th className="py-4 px-6 font-semibold text-gray-700 text-sm uppercase tracking-wide">
+                  Estado
+                </th>
+                <th className="py-4 px-6 font-semibold text-gray-700 text-sm uppercase tracking-wide rounded-tr-2xl">
+                  Total
+                </th>
               </tr>
-            ) : (
-              orders.map((order: any) => (
-                <tr key={order.databaseId} className="text-center">
-                  <td className="py-2 px-4">#{order.databaseId}</td>
-                  <td className="py-2 px-4">
-                    {new Date(order.date).toLocaleDateString("es-ES")}
-                  </td>
-                  <td className="py-2 px-4">{order.status}</td>
-                  <td className="py-2 px-4">{order.total}</td>
-                  <td className="py-2 px-4">
-                    <Link
-                      href={`/my-account/orders/${order.databaseId}`}
-                      className="text-blue-600 underline"
-                    >
-                      Ver
-                    </Link>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <ClickableOrdersTable orders={orders} />
+          </table>
+        </div>
+
+        {/* Línea decorativa final */}
+        {orders.length > 0 && (
+          <div className="flex justify-center">
+            <div className="flex items-center gap-2 text-sm text-gray-500">
+              <button className="px-3 py-1 rounded-full bg-gray-200 hover:bg-gray-300 transition-all">&lt;</button>
+              <span>1</span>
+              <button className="px-3 py-1 rounded-full bg-gray-200 hover:bg-gray-300 transition-all">&gt;</button>
+            </div>
+          </div>
+        )}
       </main>
     );
   } catch (err) {
     return (
-      <main>
-        <h1 className="font-bold text-center mb-5 text-[1.4rem]">
-          Mis pedidos
-        </h1>
-        <p className="text-red-600">
-          No se pudieron cargar los pedidos. Por favor intentalo más tarde.
-        </p>
+      <main className="space-y-6">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-800 mb-2">
+            Historial de Pedidos
+          </h1>
+          <hr className="border-gray-300 w-full" />
+        </div>
+        <div className="text-center py-12 text-red-600 bg-red-50 rounded-2xl border border-red-200">
+          No se pudieron cargar los pedidos. Por favor inténtalo más tarde.
+        </div>
       </main>
     );
   }

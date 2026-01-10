@@ -28,6 +28,9 @@ export default function RegisterForm() {
       return;
     }
 
+    setLoading(true);
+    setMessage("");
+
     try {
       const res = await fetch("/api/register", {
         method: "POST",
@@ -64,75 +67,91 @@ export default function RegisterForm() {
   }
 
   return (
-    <div className="flex items-center justify-center mt-30">
-      <Form
-        onSubmit={() => setLoading(true)}
-        action={handleSubmit}
-        className="bg-white p-10 rounded-2xl w-100"
-      >
-        <h1 className="text-2xl font-bold text-center mb-8 text-purple-700">
-          Registro de usuario
+    <div className="flex p-24 items-center justify-center">
+      <div className="w-[600px]">
+        <h1 className="text-4xl font-bold text-center mb-8 text-[#E985A7]">
+          Registrate
         </h1>
+        <div className="bg-white shadow-2xl rounded-[16px] p-8 border border-pink-100/50 backdrop-blur-sm">
+          <Form action={handleSubmit} className="space-y-6">
+            <div className="flex flex-col items-center">
+              <div className="w-[90%]">
+                <label className="block text-sm font-bold text-gray-700 mb-1 pl-1">
+                  Nombre
+                </label>
+                <input
+                  type="text"
+                  name="firstName"
+                  required
+                  placeholder="Nombre"
+                  className="w-full px-5 py-4 border-1 border-black rounded-[12px] focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-200/50 transition-all duration-300"
+                />
+              </div>
+            </div>
 
-        <input
-          type="text"
-          placeholder="Nombre"
-          name="firstName"
-          required
-          className="w-full mb-4 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
-        />
+            <div className="flex flex-col items-center">
+              <div className="w-[90%]">
+                <label className="block text-sm font-bold text-gray-700 mb-1 pl-1">
+                  Apellido
+                </label>
+                <input
+                  type="text"
+                  name="lastName"
+                  required
+                  placeholder="Apellido"
+                  className="w-full px-5 py-4 border-1 border-black rounded-[12px] focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-200/50 transition-all duration-300"
+                />
+              </div>
+            </div>
 
-        <input
-          type="text"
-          placeholder="Apellido"
-          name="lastName"
-          required
-          className="w-full mb-4 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
-        />
+            <div className="flex flex-col items-center">
+              <div className="w-[90%]">
+                <label className="block text-sm font-bold text-gray-700 mb-1 pl-1">
+                  Usuario (no se puede cambiar)
+                </label>
+                <input
+                  type="text"
+                  name="username"
+                  required
+                  placeholder="Usuario"
+                  className="w-full px-5 py-4 border-1 border-black rounded-[12px] focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-200/50 transition-all duration-300 "
+                />
+              </div>
+            </div>
 
-        <input
-          type="text"
-          placeholder="Usuario (no se puede cambiar)"
-          name="username"
-          required
-          className="w-full mb-4 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
-        />
+            <div className="flex flex-col items-center">
+              <div className="w-[90%]">
+                <label className="block text-sm font-bold text-gray-700 mb-1 pl-1">
+                  Correo
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  required
+                  placeholder="Correo"
+                  className="w-full px-5 py-4 border-1 border-black rounded-[12px] focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-200/50 transition-all duration-300 "
+                />
+              </div>
+            </div>
 
-        <input
-          type="email"
-          placeholder="Correo"
-          name="email"
-          required
-          className="w-full mb-4 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
-        />
+            {message && (
+              <p className="text-red-500 text-sm text-center p-3 bg-red-50 rounded-2xl border w-[80%] mx-auto">
+                {message}
+              </p>
+            )}
 
-        <div className="relative w-full mb-4">
-          <input
-            type={showPassword ? "text" : "password"}
-            placeholder="Contraseña"
-            name="password"
-            required
-            className="w-full mb-4 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            tabIndex={-1}
-            className="absolute right-3 top-1/2 -translate-y-4 text-gray-500"
-          >
-            {showPassword ? <EyeIcon size={20} /> : <EyeOffIcon size={20} />}
-          </button>
+            <div className="flex gap-4 pt-6 w-[40%] mx-auto">
+              <button
+                type="submit"
+                disabled={loading}
+                className="flex-1 bg-[#E985A7] hover:bg-[#D6779C] text-white py-4 px-8 rounded-[24px] transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#E985A7]/50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? "Cargando..." : "Registrarse"}
+              </button>
+            </div>
+          </Form>
         </div>
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-purple-600 text-white p-2 rounded hover:bg-purple-700 cursor-pointer"
-        >
-          {loading ? "Cargando..." : "Registrarse"}
-        </button>
-        {message && <p className="mt-4 text-red-500 text-center">{message}</p>}
-      </Form>
+      </div>
     </div>
   );
 }

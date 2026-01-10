@@ -30,7 +30,12 @@ export default function UserMenu() {
 
   return (
     <div className="relative" onClick={() => setOpen(!open)}>
-      <FaRegUserCircle className="h-8 w-8 cursor-pointer" />
+      <img
+        src="/assets/user.png"  // tu PNG
+        alt="Perfil"
+        className="h-10 w-10 cursor-pointer rounded-full object-cover"
+      />
+
 
       {open && (
         <div className="absolute right-0 mt-2 bg-white border-3 rounded-xl p-2 text-sm min-w-50">
@@ -58,13 +63,13 @@ export default function UserMenu() {
             <nav className="flex flex-col">
               <Link
                 href="/login"
-                className="text-center hover:bg-blue-500 whitespace-nowrap p-3 border border-black rounded-full bg-blue-300 mb-3"
+                className="text-center whitespace-nowrap p-3 border border-gray-300 rounded-full mb-3"
               >
                 Iniciar sesión
               </Link>
               <Link
                 href="/register"
-                className="text-center hover:bg-blue-500 whitespace-nowrap p-3 border border-black rounded-full bg-blue-300"
+                className="text-center whitespace-nowrap p-3 border border-gray-300 rounded-full"
               >
                 Registrarse
               </Link>

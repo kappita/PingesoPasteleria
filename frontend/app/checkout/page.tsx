@@ -356,46 +356,52 @@ export default function CheckoutPage() {
               <input
                 type="text"
                 name="phone"
-                placeholder="Número de celular o teléfono"
+                placeholder="Número de celular o teléfono *"
                 value={form.phone}
                 onChange={handleChange}
-                className="border rounded p-2 w-full"
+                className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#E985A7]/50 focus:border-transparent shadow-sm transition-all"
+                required
               />
             </div>
+          </div>
 
-            <h2 className="text-xl font-semibold mb-4">Tipo de entrega</h2>
-            <div className="inline-flex gap-3">
+          {/* Tipo entrega */}
+          <div>
+            <h2 className="text-xl font-semibold text-gray-900 border-b border-gray-200 pb-2 mb-6">
+              Tipo de entrega
+            </h2>
+            <div className="flex flex-col sm:flex-row gap-4">
               <button
                 type="button"
                 aria-pressed={deliveryType === "delivery"}
                 onClick={() => setDeliveryType("delivery")}
                 className={[
-                  "h-18 w-40 rounded-none border font-medium transition-colors",
-                  "focus:outline-none focus:ring-2 focus:ring-black/40",
+                  "flex-1 h-16 rounded-2xl border-2 font-semibold transition-all shadow-sm",
+                  "focus:outline-none focus:ring-4 focus:ring-[#E985A7]/30",
                   deliveryType === "delivery"
-                    ? "bg-[#E985A7] text-white"
-                    : "bg-white text-black border-black/30 hover:bg-black/5",
+                    ? "bg-[#E985A7] text-white border-[#E985A7] shadow-[#E985A7]/25 hover:shadow-[#E985A7]/40"
+                    : "bg-white text-gray-900 border-gray-300 hover:border-[#E985A7]/50 hover:shadow-md hover:shadow-[#E985A7]/10",
                 ].join(" ")}
               >
                 🏍️ Envío a domicilio
               </button>
-
               <button
                 type="button"
                 aria-pressed={deliveryType === "pickup"}
                 onClick={() => setDeliveryType("pickup")}
                 className={[
-                  "h-18 w-40 rounded-none border  font-medium transition-colors",
-                  "focus:outline-none focus:ring-2 focus:ring-black/40",
+                  "flex-1 h-16 rounded-2xl border-2 font-semibold transition-all shadow-sm",
+                  "focus:outline-none focus:ring-4 focus:ring-[#E985A7]/30",
                   deliveryType === "pickup"
-                    ? "bg-[#E985A7] text-white "
-                    : "bg-white text-black border-black/30 hover:bg-black/5",
+                    ? "bg-[#E985A7] text-white border-[#E985A7] shadow-[#E985A7]/25 hover:shadow-[#E985A7]/40"
+                    : "bg-white text-gray-900 border-gray-300 hover:border-[#E985A7]/50 hover:shadow-md hover:shadow-[#E985A7]/10",
                 ].join(" ")}
               >
                 🏠 Retiro en local
               </button>
             </div>
-            <h2 className="text-xl font-semibold mb-4">Datos de envío</h2>
+
+            {/* Datos envío */}
             {deliveryType === 'delivery' ? (
               <div className="space-y-3">
                 <input
@@ -440,54 +446,63 @@ export default function CheckoutPage() {
                 />
               </div>
             ) : (
-              <div className="mb-6 p-4 border rounded-lg bg-white">
-                <p className="text-black">
-                  Retiro de productos en Lo Errazuriz 879, Región Metropolitana de Santiago, 9201341 Santiago
+              <div className="mt-6 p-6 border rounded-2xl bg-gradient-to-r from-gray-50 to-white shadow-sm">
+                <p className="text-gray-800 font-medium">
+                  🏠 Retiro en: Lo Errazuriz 879, Santiago, Región Metropolitana
                 </p>
-              </div>
-            )}
-
-          </div>
-          <div>
-            {loadingAvailability === true ? (
-              <p className="text-gray-500 mb-4">Cargando disponibilidad global...</p>
-            ) : data ? (
-              <div className="mb-6 p-4 border rounded-lg bg-gray-50">
-                <h2 className="text-lg font-semibold mb-2">Disponibilidad de entrega</h2>
-                <p className="text-gray-700">
-                  🌐 Cupos globales restantes:{" "}
-                  <span className="font-bold text-pink-600">{data.global_remaining}</span> / {data.global_capacity}
-                </p>
-              </div>
-            ) : (
-              <p className="text-red-500 mb-4">No se pudo cargar la disponibilidad.</p>
-            )}
-            <h2 className="text-xl font-semibold mb-4">Tu pedido</h2>
-
-            <ul className="mb-6">
-              {cart.map((item: any) => (
-                <li
-                  key={`${item.id}-${item.variation_id ?? "base"}`}
-                  className="flex flex-col justify-between items-left border-b pb-2"
+                <a 
+                  href="https://goo.gl/maps/GoogleMapsLink" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-[#E985A7] underline text-sm mt-2 inline-block hover:text-pink-600 transition-colors"
                 >
-                  <span className="text-gray-800">
-                    {item.name} × {item.quantity}
-                  </span>
-                  <p>Fecha de entrega : {item.deliveryDate}</p>
+                  Ver en Google Maps ↗
+                </a>
+              </div>
+            )}
+          </div>
+        </div>
 
-                  {item.deliveryDate && (
-                    <p>
-                      📅 Cupos diarios para {item.deliveryDate}:{" "}
-                      <span className="font-semibold">
-                        {getDailyRemaining(item.deliveryDate) ?? "N/D"}
-                      </span>
-                    </p>
-                  )}
+        {/* Columna derecha: Productos + Total + Botón */}
+        <div className="space-y-6">
+          {/* {loadingAvailability === true ? (
+            <div className="p-6 border-2 border-dashed border-gray-300 rounded-2xl text-center">
+              <p className="text-gray-500">Cargando disponibilidad global...</p>
+            </div>
+          ) : data ? (
+            <div className="p-6 border border-gray-200 rounded-2xl bg-gradient-to-b from-gray-50/70 to-transparent">
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Disponibilidad global</h3>
+              <p className="text-2xl font-bold text-[#E985A7]">
+                {data.global_remaining} / {data.global_capacity} cupos restantes
+              </p>
+            </div>
+          ) : (
+            <div className="p-6 border-2 border-dashed border-red-200 rounded-2xl bg-red-50 text-center">
+              <p className="text-red-600 font-medium">No disponible</p>
+            </div>
+          )} */}
 
-                  <span className="text-gray-700 font-medium">
-                    ${(item.price * item.quantity).toFixed(2)}
-                  </span>
-                </li>
+          <div className="space-y-4">
+            <h2 className="text-xl font-semibold text-gray-900 border-b border-gray-200 pb-2">
+              Productos
+            </h2>
+            <div className="space-y-4 divide-y divide-gray-100">
+              {cart.map((item: any) => (
+                <div key={`${item.id}-${item.variation_id ?? "base"}`} className="pt-4 first:pt-0 grid grid-cols-2 gap-4 items-end">
+                  <div>
+                    <p className="font-semibold text-gray-900">{item.name}</p>
+                    <p className="text-sm text-gray-600">📅 {item.deliveryDate}</p>
+                    {item.deliveryDate && (
+                      <p className="text-xs text-gray-500">
+                        Cupos: <span className="font-semibold text-[#E985A7]">{getDailyRemaining(item.deliveryDate) ?? "N/D"}</span>
+                      </p>
+                    )}
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-medium text-gray-600">× {item.quantity}</p>
+                    <p className="text-xl font-semibold text-gray-900">${(item.price * item.quantity)}</p>
+                  </div>
+                </div>
               ))}
             </ul>
 
@@ -511,29 +526,45 @@ export default function CheckoutPage() {
                   Cancelar y Modificar pedido
                 </button>
               </div>
-            ) : (
+            </div>
+          </div>
+
+          {/* Botones */}
+          {preferenceId ? (
+            <div className="space-y-4 pt-6 border-t border-gray-200">
+              <Wallet initialization={{ preferenceId }} />
+              <button
+                onClick={handleCancelOrder}
+                disabled={loading}
+                className="w-full bg-white border-2 border-[#E985A7] text-[#E985A7] px-6 py-4 rounded-2xl font-semibold hover:bg-[#E985A7] hover:text-white shadow-lg hover:shadow-[#E985A7]/25 transition-all disabled:opacity-50"
+              >
+                Cancelar y Modificar pedido
+              </button>
+            </div>
+          ) : (
+            <div className="flex justify-center">
               <button
                 onClick={handleCheckout}
                 disabled={loading}
-                className="mt-6 w-full bg-pink-600 text-white px-6 py-3 rounded-lg hover:bg-pink-700 transition disabled:opacity-50"
+                className="w-[50%]  bg-[#E985A7] text-white px-6 py-3 rounded-4xl font-semibold text-lg shadow-lg hover:shadow-[#E985A7]/40 hover:bg-[#d96b8f] hover:scale-[1.02] transition-all disabled:opacity-50"
               >
-                {loading ? "Generando orden..." : "Confirmar pedido"}
+                {loading ? "Generando orden..." : "Pagar"}
               </button>
-            )}
-          </div>
+            </div>
+          )}
         </div>
-      )}
+      </div>
+    )}
 
-      {message && (
-        <div
-          className={`mt-6 text-center p-3 rounded ${message.startsWith("✅")
-            ? "bg-green-100 text-green-700"
-            : "bg-yellow-100 text-yellow-700"
-            }`}
-        >
-          {message}
-        </div>
-      )}
-    </main>
-  );
+    {message && (
+      <div className={`p-6 rounded-2xl text-center font-semibold mt-8 ${
+        message.startsWith("✅")
+          ? "bg-green-100 text-green-800 border-2 border-green-200"
+          : "bg-yellow-100 text-yellow-800 border-2 border-yellow-200"
+      }`}>
+        {message}
+      </div>
+    )}
+  </main>
+);
 }
