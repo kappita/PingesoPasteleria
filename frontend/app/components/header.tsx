@@ -50,8 +50,10 @@ const Header = () => {
                   className="w-6 h-6 md:w-10 md:h-10"
                 />
               </Link>
-
-              <UserMenu />
+              <div className="translate-x-2">
+                <UserMenu />
+              </div>
+              
             </div>
           </div>
         </div>
