@@ -17,7 +17,7 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: process.env.WORDPRESS_URL
           ? new URL(process.env.WORDPRESS_URL).hostname
-          : "tudominio.com", // Puedes poner tu dominio real aquí como respaldo
+          : "",
         port: "",
         pathname: "/wp-content/uploads/**",
       },
