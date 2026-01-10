@@ -51,16 +51,18 @@ export default function FiltersClient({ categories }: any) {
       <div>
         <nav>
           <ul className="divide-y divide-black">
-            {categories.map((cat: any) => (
-              <li key={cat.id} className="py-3">
-                <button
-                  onClick={() => filterByCategory(cat.id)}
-                  className="w-full text-left hover:text-blue-600"
-                >
-                  {cat.name} ({cat.count})
-                </button>
-              </li>
-            ))}
+            {categories
+              .filter((cat: any) => cat.name !== "Uncategorized")
+              .map((cat: any) => (
+                <li key={cat.id} className="py-3">
+                  <button
+                    onClick={() => filterByCategory(cat.id)}
+                    className="w-full text-left hover:text-blue-600"
+                  >
+                    {cat.name} ({cat.count})
+                  </button>
+                </li>
+              ))}
             <li key={0} className="py-3">
               <button
                 onClick={() => filterByCategory(0)}

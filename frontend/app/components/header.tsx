@@ -61,16 +61,22 @@ const Header = () => {
             Inicio
           </Link>
           <Link
-            href="/products?page=1"
-            className="flex items-center justify-center text-center text-white hover:text-pink-100 font-medium transition h-12 w-40"
-          >
-            Tienda
-          </Link>
-          <Link
-            href="/events"
+            href="/products?page=1&category=33"
             className="flex items-center justify-center text-center text-white hover:text-pink-100 font-medium  transition h-8 w-40"
           >
-            Eventos
+            Pasteleria
+          </Link>
+          <Link
+            href="/products?page=1&category=34"
+            className="flex items-center justify-center text-center text-white hover:text-pink-100 font-medium  transition h-8 w-40"
+          >
+            Catering
+          </Link>
+          <Link
+            href="/products?page=1&category=18"
+            className="flex items-center justify-center text-center text-white hover:text-pink-100 font-medium  transition h-8 w-40"
+          >
+            Tortas
           </Link>
         </div>
       </nav>
