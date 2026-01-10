@@ -1,8 +1,12 @@
+"use client";
+
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { FaRegUserCircle } from "react-icons/fa";
+import { useRouter } from "next/navigation";
 
 export default function UserMenu() {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [user, setUser] = useState<{
     firstName: string;
@@ -13,6 +17,9 @@ export default function UserMenu() {
     async function fetchUser() {
       try {
         const res = await fetch("/api/viewer");
+        if (res.status === 401) {
+          router.replace("/login");
+        }
         if (!res.ok) return;
         const data = await res.json();
         setUser(data.viewer);
@@ -33,7 +40,7 @@ export default function UserMenu() {
       <img
         src="/assets/user.png"  // tu PNG
         alt="Perfil"
-        className="h-10 w-10 cursor-pointer rounded-full object-cover"
+        className="h-6 h-6 md:h-10 md:w-10 cursor-pointer rounded-full object-cove"
       />
 
 

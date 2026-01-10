@@ -298,272 +298,195 @@ export default function CheckoutPage() {
     }
   };
 
-  return (
-    <main className="p-8 w-[80%] flex flex-col">
-      <h1 className="text-3xl font-bold mb-4">Finalizar compra</h1>
-      {cart.length === 0 ? (
-        <div className="text-center">
-          <p>Tu carrito está vacío.</p>
-          <Link href="/products" className="text-[#E985A7] underline">
-            Ir a comprar
-          </Link>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div>
-            <h2 className="text-xl font-semibold mb-4">Datos de facturación</h2>
-            <div className="space-y-3">
-              <input
-                type="text"
-                name="first_name"
-                placeholder="Nombre"
-                value={form.first_name}
-                onChange={handleChange}
-                className="border rounded p-2 w-full"
-              />
-              <input
-                type="text"
-                name="last_name"
-                placeholder="Apellido"
-                value={form.last_name}
-                onChange={handleChange}
-                className="border rounded p-2 w-full"
-              />
-              <input
-                type="email"
-                name="email"
-                placeholder="Correo electrónico"
-                value={form.email}
-                onChange={handleChange}
-                className="border rounded p-2 w-full"
-              />
-              <input
-                type="text"
-                name="address_1"
-                placeholder="Dirección"
-                value={form.address_1}
-                onChange={handleChange}
-                className="border rounded p-2 w-full"
-              />
-              <input
-                type="text"
-                name="city"
-                placeholder="Ciudad"
-                value={form.city}
-                onChange={handleChange}
-                className="border rounded p-2 w-full"
-              />
-              <input
-                type="text"
-                name="phone"
-                placeholder="Número de celular o teléfono *"
-                value={form.phone}
-                onChange={handleChange}
-                className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#E985A7]/50 focus:border-transparent shadow-sm transition-all"
-                required
-              />
-            </div>
-          </div>
-
-          {/* Tipo entrega */}
-          <div>
-            <h2 className="text-xl font-semibold text-gray-900 border-b border-gray-200 pb-2 mb-6">
-              Tipo de entrega
-            </h2>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <button
-                type="button"
-                aria-pressed={deliveryType === "delivery"}
-                onClick={() => setDeliveryType("delivery")}
-                className={[
-                  "flex-1 h-16 rounded-2xl border-2 font-semibold transition-all shadow-sm",
-                  "focus:outline-none focus:ring-4 focus:ring-[#E985A7]/30",
-                  deliveryType === "delivery"
-                    ? "bg-[#E985A7] text-white border-[#E985A7] shadow-[#E985A7]/25 hover:shadow-[#E985A7]/40"
-                    : "bg-white text-gray-900 border-gray-300 hover:border-[#E985A7]/50 hover:shadow-md hover:shadow-[#E985A7]/10",
-                ].join(" ")}
-              >
-                🏍️ Envío a domicilio
-              </button>
-              <button
-                type="button"
-                aria-pressed={deliveryType === "pickup"}
-                onClick={() => setDeliveryType("pickup")}
-                className={[
-                  "flex-1 h-16 rounded-2xl border-2 font-semibold transition-all shadow-sm",
-                  "focus:outline-none focus:ring-4 focus:ring-[#E985A7]/30",
-                  deliveryType === "pickup"
-                    ? "bg-[#E985A7] text-white border-[#E985A7] shadow-[#E985A7]/25 hover:shadow-[#E985A7]/40"
-                    : "bg-white text-gray-900 border-gray-300 hover:border-[#E985A7]/50 hover:shadow-md hover:shadow-[#E985A7]/10",
-                ].join(" ")}
-              >
-                🏠 Retiro en local
-              </button>
-            </div>
-
-            {/* Datos envío */}
-            {deliveryType === 'delivery' ? (
+return (
+  <main className="max-w-6xl mx-auto p-4 md:p-8 w-full">
+    <h1 className="text-2xl md:text-3xl font-bold mb-6 text-gray-900">Finalizar compra</h1>
+    
+    {cart.length === 0 ? (
+      <div className="text-center py-12">
+        <p className="text-lg text-gray-600 mb-4">Tu carrito está vacío.</p>
+        <Link href="/products" className="inline-block bg-[#E985A7] text-white px-6 py-3 rounded-xl font-semibold hover:bg-pink-600 transition">
+          Ir a comprar
+        </Link>
+      </div>
+    ) : (
+      <>
+        {/* Formulario 2 columnas */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          {/* Columna izquierda: Datos facturación + entrega */}
+          <div className="space-y-8">
+            <div>
+              <h2 className="text-xl font-semibold mb-6 text-gray-900">Datos de facturación</h2>
               <div className="space-y-3">
                 <input
-                  type="text"
-                  name="first_name"
-                  placeholder="Nombre"
-                  value={shippingForm.first_name}
-                  onChange={handleShippingChange}
-                  className="border rounded p-2 w-full"
+                  type="text" name="first_name" placeholder="Nombre"
+                  value={form.first_name} onChange={handleChange}
+                  className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#E985A7]/50 focus:border-transparent shadow-sm transition-all"
                 />
                 <input
-                  type="text"
-                  name="last_name"
-                  placeholder="Apellido"
-                  value={shippingForm.last_name}
-                  onChange={handleShippingChange}
-                  className="border rounded p-2 w-full"
+                  type="text" name="last_name" placeholder="Apellido"
+                  value={form.last_name} onChange={handleChange}
+                  className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#E985A7]/50 focus:border-transparent shadow-sm transition-all"
                 />
                 <input
-                  type="email"
-                  name="email"
-                  placeholder="Correo electrónico"
-                  value={shippingForm.email}
-                  onChange={handleShippingChange}
-                  className="border rounded p-2 w-full"
+                  type="email" name="email" placeholder="Correo electrónico"
+                  value={form.email} onChange={handleChange}
+                  className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#E985A7]/50 focus:border-transparent shadow-sm transition-all"
                 />
                 <input
-                  type="text"
-                  name="address_1"
-                  placeholder="Dirección"
-                  value={shippingForm.address_1}
-                  onChange={handleShippingChange}
-                  className="border rounded p-2 w-full"
+                  type="text" name="address_1" placeholder="Dirección"
+                  value={form.address_1} onChange={handleChange}
+                  className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#E985A7]/50 focus:border-transparent shadow-sm transition-all"
                 />
                 <input
-                  type="text"
-                  name="city"
-                  placeholder="Ciudad"
-                  value={shippingForm.city}
-                  onChange={handleShippingChange}
-                  className="border rounded p-2 w-full"
+                  type="text" name="city" placeholder="Ciudad"
+                  value={form.city} onChange={handleChange}
+                  className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#E985A7]/50 focus:border-transparent shadow-sm transition-all"
+                />
+                <input
+                  type="tel" name="phone" placeholder="Número de celular o teléfono *"
+                  value={form.phone} onChange={handleChange}
+                  className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#E985A7]/50 focus:border-transparent shadow-sm transition-all"
+                  required
                 />
               </div>
-            ) : (
-              <div className="mt-6 p-6 border rounded-2xl bg-gradient-to-r from-gray-50 to-white shadow-sm">
-                <p className="text-gray-800 font-medium">
-                  🏠 Retiro en: Lo Errazuriz 879, Santiago, Región Metropolitana
-                </p>
-                <a 
-                  href="https://goo.gl/maps/GoogleMapsLink" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-[#E985A7] underline text-sm mt-2 inline-block hover:text-pink-600 transition-colors"
-                >
-                  Ver en Google Maps ↗
-                </a>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Columna derecha: Productos + Total + Botón */}
-        <div className="space-y-6">
-          {/* {loadingAvailability === true ? (
-            <div className="p-6 border-2 border-dashed border-gray-300 rounded-2xl text-center">
-              <p className="text-gray-500">Cargando disponibilidad global...</p>
             </div>
-          ) : data ? (
-            <div className="p-6 border border-gray-200 rounded-2xl bg-gradient-to-b from-gray-50/70 to-transparent">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Disponibilidad global</h3>
-              <p className="text-2xl font-bold text-[#E985A7]">
-                {data.global_remaining} / {data.global_capacity} cupos restantes
-              </p>
-            </div>
-          ) : (
-            <div className="p-6 border-2 border-dashed border-red-200 rounded-2xl bg-red-50 text-center">
-              <p className="text-red-600 font-medium">No disponible</p>
-            </div>
-          )} */}
 
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold text-gray-900 border-b border-gray-200 pb-2">
-              Productos
-            </h2>
-            <div className="space-y-4 divide-y divide-gray-100">
-              {cart.map((item: any) => (
-                <div key={`${item.id}-${item.variation_id ?? "base"}`} className="pt-4 first:pt-0 grid grid-cols-2 gap-4 items-end">
-                  <div>
-                    <p className="font-semibold text-gray-900">{item.name}</p>
-                    <p className="text-sm text-gray-600">📅 {item.deliveryDate}</p>
-                    {item.deliveryDate && (
-                      <p className="text-xs text-gray-500">
-                        Cupos: <span className="font-semibold text-[#E985A7]">{getDailyRemaining(item.deliveryDate) ?? "N/D"}</span>
-                      </p>
-                    )}
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm font-medium text-gray-600">× {item.quantity}</p>
-                    <p className="text-xl font-semibold text-gray-900">${(item.price * item.quantity)}</p>
-                  </div>
-                </div>
-              ))}
-            </ul>
-
-            <p className="font-bold text-xl">
-              Total: $
-              {cart
-                .reduce((acc: number, item: any) => acc + item.price * item.quantity, 0)
-                .toFixed(2)}
-            </p>
-
-            {preferenceId ? (
-              <div key={preferenceId} className="mt-6 border-t pt-6">
-                <Wallet
-                  initialization={{ preferenceId }}
-                />
+            {/* Tipo entrega */}
+            <div>
+              <h2 className="text-xl font-semibold text-gray-900 border-b border-gray-200 pb-2 mb-6">
+                Tipo de entrega
+              </h2>
+              <div className="flex flex-col sm:flex-row gap-4">
                 <button
-                  onClick={handleCancelOrder}
-                  disabled={loading}
-                  className="mt-6 bg-[#E985A7] shadow-md text-white px-6 py-3 rounded-lg hover:bg-pink-700 transition disabled:opacity-50"
+                  type="button" onClick={() => setDeliveryType("delivery")}
+                  className={[
+                    "flex-1 h-16 rounded-2xl border-2 font-semibold shadow-sm transition-all focus:outline-none focus:ring-4 focus:ring-[#E985A7]/30",
+                    deliveryType === "delivery"
+                      ? "bg-[#E985A7] text-white border-[#E985A7] shadow-[#E985A7]/25 hover:shadow-[#E985A7]/40"
+                      : "bg-white text-gray-900 border-gray-300 hover:border-[#E985A7]/50 hover:shadow-md hover:shadow-[#E985A7]/10"
+                  ].join(" ")}
                 >
-                  Cancelar y Modificar pedido
+                  🏍️ Envío a domicilio
+                </button>
+                <button
+                  type="button" onClick={() => setDeliveryType("pickup")}
+                  className={[
+                    "flex-1 h-16 rounded-2xl border-2 font-semibold shadow-sm transition-all focus:outline-none focus:ring-4 focus:ring-[#E985A7]/30",
+                    deliveryType === "pickup"
+                      ? "bg-[#E985A7] text-white border-[#E985A7] shadow-[#E985A7]/25 hover:shadow-[#E985A7]/40"
+                      : "bg-white text-gray-900 border-gray-300 hover:border-[#E985A7]/50 hover:shadow-md hover:shadow-[#E985A7]/10"
+                  ].join(" ")}
+                >
+                  🏠 Retiro en local
                 </button>
               </div>
+
+              {/* Datos envío */}
+              {deliveryType === 'delivery' && (
+                <div className="mt-6 space-y-3">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Datos de envío</h3>
+                  {['first_name', 'last_name', 'email', 'address_1', 'city'].map((field) => (
+                    <input
+                      key={field}
+                      type={field === 'email' ? 'email' : 'text'}
+                      name={field}
+                      placeholder={field.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                      value={shippingForm[field as keyof typeof shippingForm] as string}
+                      onChange={handleShippingChange}
+                      className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#E985A7]/50 focus:border-transparent shadow-sm transition-all"
+                    />
+                  ))}
+                </div>
+              )}
+              
+              {deliveryType === 'pickup' && (
+                <div className="mt-6 p-6 border rounded-2xl bg-gradient-to-r from-gray-50 to-white shadow-sm">
+                  <p className="text-gray-800 font-medium mb-2">
+                    🏠 Retiro en: Lo Errazuriz 879, Santiago, Región Metropolitana
+                  </p>
+                  <a 
+                    href="https://goo.gl/maps/GoogleMapsLink" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-[#E985A7] underline text-sm hover:text-pink-600 transition-colors"
+                  >
+                    Ver en Google Maps ↗
+                  </a>
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Botones */}
-          {preferenceId ? (
-            <div className="space-y-4 pt-6 border-t border-gray-200">
-              <Wallet initialization={{ preferenceId }} />
-              <button
-                onClick={handleCancelOrder}
-                disabled={loading}
-                className="w-full bg-white border-2 border-[#E985A7] text-[#E985A7] px-6 py-4 rounded-2xl font-semibold hover:bg-[#E985A7] hover:text-white shadow-lg hover:shadow-[#E985A7]/25 transition-all disabled:opacity-50"
-              >
-                Cancelar y Modificar pedido
-              </button>
+          {/* Columna derecha: Productos + Total + Botón */}
+          <div className="space-y-6 lg:sticky lg:top-8 lg:h-screen lg:overflow-y-auto">
+            <div className="space-y-4">
+              <h2 className="text-xl font-semibold text-gray-900 border-b border-gray-200 pb-2">
+                Productos ({cart.length})
+              </h2>
+              <div className="space-y-4 divide-y divide-gray-100">
+                {cart.map((item: any) => (
+                  <div key={`${item.id}-${item.variation_id ?? "base"}`} className="pt-4 first:pt-0 grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
+                    <div>
+                      <p className="font-semibold text-gray-900 text-lg">{item.name}</p>
+                      <p className="text-sm text-gray-600">📅 {item.deliveryDate}</p>
+                      {item.deliveryDate && (
+                        <p className="text-xs text-gray-500">
+                          Cupos: <span className="font-semibold text-[#E985A7]">{getDailyRemaining(item.deliveryDate) ?? "N/D"}</span>
+                        </p>
+                      )}
+                    </div>
+                    <div className="text-right md:text-lg">
+                      <p className="text-sm font-medium text-gray-600">× {item.quantity}</p>
+                      <p className="text-xl md:text-2xl font-bold text-gray-900">${(item.price * item.quantity).toLocaleString()}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+              <div className="pt-4 border-t border-gray-200">
+                <p className="text-2xl font-bold text-gray-900 text-right">
+                  Total: ${cart.reduce((acc: number, item: any) => acc + item.price * item.quantity, 0).toFixed(0)}
+                </p>
+              </div>
             </div>
-          ) : (
-            <div className="flex justify-center">
-              <button
-                onClick={handleCheckout}
-                disabled={loading}
-                className="w-[50%]  bg-[#E985A7] text-white px-6 py-3 rounded-4xl font-semibold text-lg shadow-lg hover:shadow-[#E985A7]/40 hover:bg-[#d96b8f] hover:scale-[1.02] transition-all disabled:opacity-50"
-              >
-                {loading ? "Generando orden..." : "Pagar"}
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-    )}
 
-    {message && (
-      <div className={`p-6 rounded-2xl text-center font-semibold mt-8 ${
-        message.startsWith("✅")
-          ? "bg-green-100 text-green-800 border-2 border-green-200"
-          : "bg-yellow-100 text-yellow-800 border-2 border-yellow-200"
-      }`}>
-        {message}
-      </div>
+            {/* Botones */}
+            <div className="space-y-4 pt-6 border-t border-gray-200">
+              {preferenceId ? (
+                <>
+                  <Wallet initialization={{ preferenceId }} />
+                  <button
+                    onClick={handleCancelOrder}
+                    disabled={loading}
+                    className="w-full bg-white border-2 border-[#E985A7] text-[#E985A7] px-6 py-4 rounded-2xl font-semibold hover:bg-[#E985A7] hover:text-white shadow-lg hover:shadow-[#E985A7]/25 transition-all disabled:opacity-50 text-lg"
+                  >
+                    Cancelar y Modificar pedido
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={handleCheckout}
+                  disabled={loading}
+                  className="w-full bg-[#E985A7] text-white px-6 py-4 rounded-2xl font-semibold text-lg shadow-lg hover:shadow-[#E985A7]/40 hover:bg-[#d96b8f] hover:scale-[1.02] transition-all disabled:opacity-50"
+                >
+                  {loading ? "Generando orden..." : "Pagar con Mercado Pago"}
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {message && (
+          <div className={`p-6 rounded-2xl text-center font-semibold mx-auto max-w-md ${
+            message.startsWith("✅")
+              ? "bg-green-100 text-green-800 border-2 border-green-200"
+              : "bg-yellow-100 text-yellow-800 border-2 border-yellow-200"
+          }`}>
+            {message}
+          </div>
+        )}
+      </>
     )}
   </main>
 );
