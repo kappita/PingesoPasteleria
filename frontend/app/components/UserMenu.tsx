@@ -1,12 +1,8 @@
-"use client";
-
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { FaRegUserCircle } from "react-icons/fa";
-import { useRouter } from "next/navigation";
 
 export default function UserMenu() {
-  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [user, setUser] = useState<{
     firstName: string;
@@ -17,9 +13,6 @@ export default function UserMenu() {
     async function fetchUser() {
       try {
         const res = await fetch("/api/viewer");
-        if (res.status === 401) {
-          router.replace("/login");
-        }
         if (!res.ok) return;
         const data = await res.json();
         setUser(data.viewer);

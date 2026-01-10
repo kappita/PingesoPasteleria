@@ -30,13 +30,17 @@ export default function LoginForm() {
       const data = await res.json();
 
       if (!res.ok) {
-        if (data.message === "fetch failed") {
-          throw new Error(
-            "Error en el servidor. Por favor, inténtalo de nuevo más tarde."
-          );
-        } else {
-          throw new Error(data?.message || "Contraseña o usuario inválido.");
+        let errorMessage = data.message || "Ocurrió un error inesperado.";
+
+        if (res.status === 401) {
+          errorMessage = data.message || "Las credenciales no son válidas.";
+        } else if (res.status === 403) {
+          errorMessage = data.message || "Debes verificar tu correo.";
+        } else if (res.status >= 500) {
+          errorMessage = "El servicio no está disponible. Reintenta en unos minutos.";
         }
+
+        throw new Error(errorMessage);
       }
 
       window.location.href = "/";
