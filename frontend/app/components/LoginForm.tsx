@@ -51,83 +51,87 @@ export default function LoginForm() {
     }
   }
 
-  return (
-    <div className="flex p-24 items-center justify-center ">
-      <div className="w-[600px]">
-        <h1 className="text-4xl font-bold text-center mb-8 text-[#E985A7]">
-            Ingresa a tu cuenta
+return (
+  <div className="min-h-screen flex items-center justify-center py-8 sm:py-8 px-4 sm:px-6 lg:px-8 ">
+    <div className="w-full max-w-md sm:max-w-lg lg:max-w-2xl xl:w-[600px]">
+      {/* Título */}
+      <div className="text-center mb-6 sm:mb-8 lg:mb-12">
+        <h1 className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-bold text-[#E985A7] leading-tight">
+          Ingresa a tu cuenta
         </h1>
-        <div className="bg-white shadow-2xl rounded-[16px] p-8 border border-pink-100/50 backdrop-blur-sm">
+      </div>
+
+      {/* Formulario */}
+      <div className="bg-white/90 backdrop-blur-sm shadow-2xl rounded-2xl sm:rounded-3xl border border-pink-100/50 p-6 sm:p-8 lg:p-12">
+        <Form action={handleSubmit} className="space-y-5 sm:space-y-6 lg:space-y-8">
           
-        <Form action={handleSubmit} className="space-y-6">
-          <div className="flex flex-col items-center">
-            <div className="w-[90%]">
-              <label className="block text-sm font-bold text-gray-700 mb-1 pl-1">
-                Nombre de usuario
-              </label>
+          {/* Usuario */}
+          <div className="space-y-2">
+            <label className="block text-xs sm:text-sm lg:text-base font-bold text-gray-700 pl-1">
+              Nombre de usuario
+            </label>
+            <input
+              type="text"
+              name="username"
+              required
+              placeholder="Nombre de usuario"
+              className="w-full px-4 sm:px-5 py-3 sm:py-4 border-2 border-pink-200/50 rounded-2xl focus:outline-none focus:border-[#E985A7] focus:ring-2 focus:ring-[#E985A7]/30 transition-all duration-300 shadow-md hover:shadow-lg"
+            />
+          </div>
+
+          {/* Contraseña */}
+          <div className="space-y-2">
+            <label className="block text-xs sm:text-sm lg:text-base font-bold text-gray-700 pl-1">
+              Contraseña
+            </label>
+            <div className="relative">
               <input
-                type="text"
-                name="username"
+                type={showPassword ? "text" : "password"}
+                name="password"
                 required
-                placeholder="Nombre de usuario"
-                className="w-full px-5 py-4 border-2 border-pink-200 rounded-[12px] focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-200/50 transition-all duration-300 shadow-lg hover:shadow-xl"
+                placeholder="contraseña"
+                className="w-full px-4 sm:px-5 py-3 sm:py-4 pr-12 border-2 border-pink-200/50 rounded-2xl focus:outline-none focus:border-[#E985A7] focus:ring-2 focus:ring-[#E985A7]/30 transition-all duration-300 shadow-md hover:shadow-lg"
               />
-            </div>
-          </div>
-
-
-          <div className="flex flex-col items-center">
-            <div className="w-[90%]">
-              <label className="block text-sm font-bold text-gray-700 mb-1 pl-1">
-                Contraseña
-              </label>
-              <div className="relative mb-3">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  required
-                  placeholder="contraseña"
-                  className="w-full px-5 py-4 pr-12 border-2 border-pink-200 rounded-[12px] focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-200/50 transition-all duration-300 shadow-lg hover:shadow-xl"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 p-1 hover:bg-blue-100 rounded-xl transition-colors"
-                >
-                  {showPassword ? <EyeOffIcon size={20} /> : <EyeIcon size={20} />}
-                </button>
-              </div>
-              <p className="text-xs text-center text-gray-400 font-medium pl-2 hover:underline cursor-pointer transition-colors">
-                ¿Has olvidado contraseña?
-              </p>
-            </div>
-          </div>
-          
-            {message && (
-              <p className="text-red-500 text-sm text-center p-3 bg-red-50 rounded-2xl border">{message}</p>
-            )}
-
-            <div className="flex gap-4 pt-6">
               <button
-                type="submit"
-                disabled={loading}
-                className="flex-1 bg-[#E985A7] hover:bg-[#D6779C] text-white py-4 px-8 rounded-[24px] shadow-xl hover:shadow-2xl transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#E985A7]/50 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? "Cargando..." : "Ingresar"}
-              </button>
-              <Link
-                href="/register"
                 type="button"
-                className="flex-1 bg-[#FFC05B] hover:bg-[#E6A943] text-white py-4 px-8 rounded-[24px] shadow-xl hover:shadow-2xl transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 text-center focus:ring-[#FFC05B]/50"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 p-1 hover:bg-gray-100 rounded-lg transition-colors"
               >
-                Registrarse
-              </Link>
+                {showPassword ? <EyeOffIcon size={18} className="sm:w-5 sm:h-5" /> : <EyeIcon size={18} className="sm:w-5 sm:h-5" />}
+              </button>
             </div>
+            <p className="text-xs sm:text-sm text-center text-gray-400 font-medium hover:underline cursor-pointer transition-colors text-right">
+              ¿Has olvidado contraseña?
+            </p>
+          </div>
 
+          {/* Mensaje error */}
+          {message && (
+            <div className="p-3 sm:p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-xs sm:text-sm text-center">
+              {message}
+            </div>
+          )}
 
-          </Form>
-        </div>
+          {/* Botones */}
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4 sm:pt-6  md:-translate-y-6">
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex-1 bg-[#E985A7] hover:bg-[#D6779C] text-white py-3 sm:py-4 px-6 lg:px-8 rounded-2xl sm:rounded-3xl shadow-xl hover:shadow-2xl hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#E985A7]/50 disabled:opacity-50 disabled:cursor-not-allowed font-semibold text-sm sm:text-base lg:text-lg min-h-[48px]"
+            >
+              {loading ? "Cargando..." : "Ingresar"}
+            </button>
+            <Link
+              href="/register"
+              type="button"
+              className="flex-1 bg-[#FFC05B] hover:bg-[#E6A943] text-white py-3 sm:py-4 px-6 lg:px-8 rounded-2xl sm:rounded-3xl shadow-xl hover:shadow-2xl hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 text-center focus:ring-[#FFC05B]/50 font-semibold text-sm sm:text-base lg:text-lg min-h-[48px]"
+            >
+              Registrarse
+            </Link>
+          </div>
+        </Form>
       </div>
     </div>
-  );
+  </div>
+);
 }
