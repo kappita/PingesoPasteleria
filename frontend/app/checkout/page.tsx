@@ -19,15 +19,10 @@ interface DeliveryData {
 
 export default function CheckoutPage() {
   const [cart, setCart] = useState<any>(null);
-  const [total, setTotal] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
-  const [preferenceId, setPreferenceId] = useState<string | null>(null);
-  const [orderId, setOrderId] = useState<number | null>(null);
-
-  const [deliveryCost, setDeliveryCost] = useState(null)
-
   const [ deliverySelection, setDeliverySelection ] = useState<DeliveryData | null>(null);
+  const [noShippingOption, setNoShippingOption] = useState(false)
 
   useEffect(() => {
     (async () => {
@@ -38,8 +33,7 @@ export default function CheckoutPage() {
       const res = await fetch("/api/store/cart", { cache: "no-store" });
       const storeCart = await res.json();
       setCart(storeCart);
-      setTotal(storeCart.totals.total_items);
-      handleSelectDeliveryType('pickup')
+      await handleSelectDeliveryType('pickup', storeCart)
     })();
   }, []);
 
@@ -80,31 +74,35 @@ export default function CheckoutPage() {
     setShippingForm({ ...shippingForm, [e.target.name]: e.target.value });
   };
 
+  const onChangePostcodeShipping = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setShippingForm({ ...shippingForm, [e.target.name]: e.target.value });
+    if (e.target.value.length == 7) {
+      updateAddress()
+    }
+  }
+  const onChangePostcodeBilling = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+    if (e.target.value.length === 7) {
+      updateAddress()
+    }
+  }
+
 
   const updateAddress = async () => {
     let body:any = {
         billing_address: form,
         shipping_address: shippingForm,
-        
     }
+    
 
-    if (deliveryType === 'pickup') {
-      body.shipping_address = null
-    }
+    body.shipping_address.address_1 = shippingForm.address_1 ? shippingForm.address_1 : form.address_1,
+    body.shipping_address.city = shippingForm.city ? shippingForm.city : form.city,
+    body.shipping_address.country = shippingForm.country ? shippingForm.country : form.country,
+    body.shipping_address.first_name = shippingForm.first_name ? shippingForm.first_name : form.first_name,
+    body.shipping_address.last_name = shippingForm.last_name ? shippingForm.last_name : form.last_name,
+    body.shipping_address.postcode = shippingForm.postcode ? shippingForm.postcode : form.postcode,
+    body.shipping_address.state = 'CL-RM'
 
-    console.log(body)
-
-    // body.shipping_address.address_1 = form.address_1,
-    // body.shipping_address.city = form.city
-    // body.shipping_address.country = form.country
-    // body.shipping_address.first_name = form.first_name
-    // body.shipping_address.last_name = form.last_name
-    // body.shipping_address.postcode = form.postcode
-    // body.shipping_address.state = 'CL-RM'
-
-
-
-    console.log(`enviando: `, body)
 
 
     const res = await fetch("/api/store/cart/updateCustomer", {
@@ -114,29 +112,40 @@ export default function CheckoutPage() {
       
     })
 
-    const newCart = await res.json();
-    console.log(newCart)
-
+    const newCart = await res.json()
+    setCart(newCart)
+    console.log('vamos a handlear delivery')
+    await handleDeliveryType(deliveryType, newCart)
+    console.log('delivery handleado')
 
   }
 
-  const handleBlur = () => {
+  const handleBlur = async () => {
     if (form.postcode.length < 3 && shippingForm.postcode.length < 3) return;
-    updateAddress()
+    await updateAddress()
   }
 
-  const handleSelectDeliveryType = async (type: Fulfillment) => {
+  const handleSelectDeliveryType = async (type: Fulfillment, updatedCart: any) => {
+    let definitiveCart = updatedCart
+    if (!updatedCart) {
+      definitiveCart = cart
+    }
     const method_id = type === 'pickup' ? 'pickup_location' : 'flat_rate'
 
-    if (!cart) return;
+    if (!definitiveCart) return;
 
-    console.log(cart)
 
-    const selectedRate = cart.shipping_rates[0].shipping_rates.find((rate:any) => rate.method_id == method_id)
-    console.log(selectedRate)
+    const selectedRate = definitiveCart.shipping_rates[0].shipping_rates.find((rate:any) => rate.method_id == method_id)
+    console.log('El selected rate es', selectedRate)
+    if (!selectedRate) {
+      setNoShippingOption(true)
+      return
+    }
+
+    setNoShippingOption(false)
 
     const body = {
-      package_id: cart.shipping_rates[0].package_id,
+      package_id: definitiveCart.shipping_rates[0].package_id,
       rate_id: selectedRate.rate_id
     }
     console.log('metodo seleccionado', body)
@@ -151,13 +160,18 @@ export default function CheckoutPage() {
   }
 
 
-  const handleDeliveryType = async (type: Fulfillment) => {
+  const handleDeliveryType = async (type: Fulfillment, updatedCart: any) => {
+    if (type === deliveryType && type === 'pickup') {
+      console.log("son los mismos y es retiro no se valida chau")
+      return
+    }
+
     if (type === 'pickup') {
       setDeliveryType('pickup')
-      handleSelectDeliveryType('pickup')
+      await handleSelectDeliveryType('pickup', updatedCart)
     } else {
       setDeliveryType('delivery')
-      handleSelectDeliveryType('delivery')
+      await handleSelectDeliveryType('delivery', updatedCart)
     }
   }
 
@@ -175,11 +189,21 @@ export default function CheckoutPage() {
       return;
     }
 
-    // if (deliveryType == 'delivery' && (!shippingForm.first_name || !shippingForm.last_name || !shippingForm.email || !shippingForm.address_1 || !shippingForm.city || !shippingForm.postcode)) {
-    //   setMessage("Completa todos los campos obligatorios")
-    //   console.log(shippingForm)
-    //   return;
-    // }
+    if (deliveryType == 'delivery' && (!shippingForm.first_name || !shippingForm.last_name || !shippingForm.address_1 || !shippingForm.city || !shippingForm.postcode)) {
+      setMessage("Completa todos los campos obligatorios")
+      console.log(shippingForm)
+      return;
+    }
+
+    if (deliveryType == 'delivery' && shippingForm.postcode.length != 7) {
+      setMessage("El código postal es inválido. Debe ser un número de 7 dígitos")
+      return
+    }
+
+    if (deliveryType == 'pickup' && form.postcode.length != 7) {
+      setMessage("El código postal es inválido. Debe ser un número de 7 dígitos")
+      return
+    }
 
     try {
       setLoading(true);
@@ -217,13 +241,14 @@ export default function CheckoutPage() {
 
       if (!orderResponse.ok) throw new Error("Error al crear la orden en WP");
       const orderData = await orderResponse.json();
-
+      
+      const res = await fetch("/api/store/cart/newCart");
       window.location.href = orderData.payment_result.redirect_url;
 
       //clearCart();
       setMessage(`✅ Pedido #${orderData.id} creado correctamente.`);
 
-      const res = await fetch("/api/store/cart/newCart");
+      // Vaciar carrito y crear uno nuevo
 
 
     }
@@ -238,7 +263,7 @@ return (
   <main className="max-w-6xl mx-auto p-4 md:p-8 w-full">
     <h1 className="text-2xl md:text-3xl font-bold mb-6 text-gray-900">Finalizar compra</h1>
     
-    {cart.length === 0 ? (
+    {cart.items.length === 0 ? (
       <div className="text-center py-12">
         <p className="text-lg text-gray-600 mb-4">Tu carrito está vacío.</p>
         <Link href="/products" className="inline-block bg-[#E985A7] text-white px-6 py-3 rounded-xl font-semibold hover:bg-pink-600 transition">
@@ -255,43 +280,43 @@ return (
               <h2 className="text-xl font-semibold mb-6 text-gray-900">Datos de facturación</h2>
               <div className="space-y-3">
                 <input
-                  type="text" name="first_name" placeholder="Nombre"
+                  type="text" name="first_name" placeholder="Nombre*"
                   value={form.first_name} onChange={handleChange}
                   onBlur={handleBlur}
                   className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#E985A7]/50 focus:border-transparent shadow-sm transition-all"
                 />
                 <input
-                  type="text" name="last_name" placeholder="Apellido"
+                  type="text" name="last_name" placeholder="Apellido*"
                   value={form.last_name} onChange={handleChange}
                   onBlur={handleBlur}
                   className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#E985A7]/50 focus:border-transparent shadow-sm transition-all"
                 />
                 <input
-                  type="email" name="email" placeholder="Correo electrónico"
+                  type="email" name="email" placeholder="Correo electrónico*"
                   value={form.email} onChange={handleChange}
                   onBlur={handleBlur}
                   className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#E985A7]/50 focus:border-transparent shadow-sm transition-all"
                 />
                 <input
-                  type="text" name="address_1" placeholder="Dirección"
+                  type="text" name="address_1" placeholder="Dirección*"
                   value={form.address_1} onChange={handleChange}
                   onBlur={handleBlur}
                   className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#E985A7]/50 focus:border-transparent shadow-sm transition-all"
                 />
                 <input
-                  type="text" name="city" placeholder="Ciudad"
+                  type="text" name="city" placeholder="Ciudad*"
                   value={form.city} onChange={handleChange}
                   onBlur={handleBlur}
                   className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#E985A7]/50 focus:border-transparent shadow-sm transition-all"
                 />
                 <input
-                  type="text" name="postcode" placeholder="Código postal"
-                  value={form.postcode} onChange={handleChange}
+                  type="text" name="postcode" placeholder="Código postal*"
+                  value={form.postcode} onChange={onChangePostcodeBilling}
                   onBlur={handleBlur}
                   className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#E985A7]/50 focus:border-transparent shadow-sm transition-all"
                 />
                 <input
-                  type="tel" name="phone" placeholder="Número de celular o teléfono *"
+                  type="tel" name="phone" placeholder="Número de celular o teléfono*"
                   value={form.phone} onChange={handleChange}
                   onBlur={handleBlur}
                   className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#E985A7]/50 focus:border-transparent shadow-sm transition-all"
@@ -307,7 +332,7 @@ return (
               </h2>
               <div className="flex flex-col sm:flex-row gap-4">
                 <button
-                  type="button" onClick={() => handleDeliveryType("delivery")}
+                  type="button" onClick={() => handleDeliveryType("delivery", null)}
                   className={[
                     "flex-1 h-16 rounded-2xl border-2 font-semibold shadow-sm transition-all focus:outline-none focus:ring-4 focus:ring-[#E985A7]/30",
                     deliveryType === "delivery"
@@ -318,7 +343,7 @@ return (
                   🏍️ Envío a domicilio
                 </button>
                 <button
-                  type="button" onClick={() => handleDeliveryType("pickup")}
+                  type="button" onClick={() => handleDeliveryType("pickup", null)}
                   className={[
                     "flex-1 h-16 rounded-2xl border-2 font-semibold shadow-sm transition-all focus:outline-none focus:ring-4 focus:ring-[#E985A7]/30",
                     deliveryType === "pickup"
@@ -334,18 +359,36 @@ return (
               {deliveryType === 'delivery' && (
                 <div className="mt-6 space-y-3">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">Datos de envío</h3>
-                  {['Nombre', 'Apellido', 'email', 'Dirección', 'Ciudad', 'Código Postal'].map((field) => (
-                    <input
-                      key={field}
-                      type={field === 'email' ? 'email' : 'text'}
-                      name={field}
-                      placeholder={field.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
-                      value={shippingForm[field as keyof typeof shippingForm] as string}
-                      onChange={handleShippingChange}
-                      onBlur={handleBlur}
-                      className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#E985A7]/50 focus:border-transparent shadow-sm transition-all"
-                    />
-                  ))}
+                  <input
+                  type="text" name="first_name" placeholder="Nombre"
+                  value={shippingForm.first_name} onChange={handleShippingChange}
+                  onBlur={handleBlur}
+                  className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#E985A7]/50 focus:border-transparent shadow-sm transition-all"
+                />
+                <input
+                  type="text" name="last_name" placeholder="Apellido"
+                  value={shippingForm.last_name} onChange={handleShippingChange}
+                  onBlur={handleBlur}
+                  className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#E985A7]/50 focus:border-transparent shadow-sm transition-all"
+                />
+                <input
+                  type="text" name="address_1" placeholder="Dirección"
+                  value={shippingForm.address_1} onChange={handleShippingChange}
+                  onBlur={handleBlur}
+                  className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#E985A7]/50 focus:border-transparent shadow-sm transition-all"
+                />
+                <input
+                  type="text" name="city" placeholder="Ciudad"
+                  value={shippingForm.city} onChange={handleShippingChange}
+                  onBlur={handleBlur}
+                  className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#E985A7]/50 focus:border-transparent shadow-sm transition-all"
+                />
+                <input
+                  type="text" name="postcode" placeholder="Código postal"
+                  value={shippingForm.postcode} onChange={onChangePostcodeShipping}
+                  onBlur={handleBlur}
+                  className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#E985A7]/50 focus:border-transparent shadow-sm transition-all"
+                />
                 </div>
               )}
               
@@ -406,6 +449,9 @@ return (
                     </div>
                   ) : (<div></div>)
                 }
+                {noShippingOption && (
+                  <p>No es posible el envío a tu dirección, asegúrate de que el código postal esté bien escrito o retira tu pedido en el local.</p>
+                )}
                 
               </div>
               
@@ -425,10 +471,7 @@ return (
                   {loading ? "Generando orden..." : "Pagar con Webpay"}
                 </button>
             </div>
-          </div>
-        </div>
-
-        {message && (
+            {message && (
           <div className={`p-6 rounded-2xl text-center font-semibold mx-auto max-w-md ${
             message.startsWith("✅")
               ? "bg-green-100 text-green-800 border-2 border-green-200"
@@ -437,6 +480,10 @@ return (
             {message}
           </div>
         )}
+          </div>
+        </div>
+
+        
       </>
     )}
   </main>
