@@ -127,7 +127,7 @@ export default function CartPage() {
     <main className="w-[50%] p-16 mx-auto p-getOrder6">
       <h1 className="text-3xl font-bold mb-8">Tu Carrito</h1>
 
-      {!cart && cart.items.length === 0 ? (
+      {cart && cart.items.length === 0 ? (
         <div className="text-center mb-24">
           <p className="text-gray-600 mb-6">Tu carrito está vacío 🛍️</p>
           <Link
