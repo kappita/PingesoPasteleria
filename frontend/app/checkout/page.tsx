@@ -6,7 +6,6 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { createHold, clearHold } from "../lib/wcpdd";
 import { initMercadoPago, Wallet } from '@mercadopago/sdk-react';
-import { useDeliveryDate} from "../context/DeliveryDateContext"
 
 initMercadoPago(process.env.NEXT_PUBLIC_MP_PUBLIC_KEY!); // Inicializa MercadoPago con la clave pública
 

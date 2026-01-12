@@ -7,7 +7,6 @@ import { useDeliveryAvailability } from "../hooks/useDeliveryAvailability";
 import CartItemRow from "../context/CartItemRow";
 import { useEffect, useState } from "react";
 import DeliveryDateSelector from "../components/DeliveryDateSelector";
-import { useDeliveryDate} from "../context/DeliveryDateContext"
 
 export default function CartPage() {
   const router = useRouter();
