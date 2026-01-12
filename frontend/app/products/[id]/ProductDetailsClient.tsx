@@ -106,6 +106,32 @@ type bruh = {
   variations: any;
 };
 
+function transformToWooVariation(rawAttributes: any, useGlobalPrefix = false) {
+  return Object.entries(rawAttributes).map(([key, value]) => {
+    // 1. Clean the Attribute Key
+    // If it's a global attribute (e.g. "Size"), WC expects "pa_size"
+    let attributeKey = key;
+    if (useGlobalPrefix) {
+      // "Cantidad" -> "pa_cantidad"
+      attributeKey = `pa_${key.toLowerCase().replace(/\s+/g, '-')}`;
+    }
+
+    // 2. Clean the Value (Optional but recommended for Global Attributes)
+    // Global attributes usually expect the SLUG (e.g. "chocolate-blanco") not the Name ("Chocolate Blanco")
+    // Custom attributes (local to product) expect the exact Name string.
+    let attributeValue:string = value as string;
+    if (useGlobalPrefix) {
+      attributeValue = (value as string).toLowerCase().replace(/\s+/g, '-');
+    }
+
+    return {
+      attribute: attributeKey,
+      value: attributeValue
+    };
+  });
+}
+
+
 export default function ProductDetailsClient({ product, variations }: bruh) {
   const [selectedAttrs, setSelectedAttrs] = useState<{ [key: string]: string }>(
     {}
@@ -116,12 +142,8 @@ export default function ProductDetailsClient({ product, variations }: bruh) {
   const [deliveryDate, setDeliveryDate] = useState<string>("");
   const [addedSuccess, setAddedSuccess] = useState(false);
   const { data, getDailyRemaining, refresh } = useDeliveryAvailability();
-  const { addToCart } = useCart();
   const router = useRouter();
 
-  useEffect(() => {
-    if (deliveryDate) refresh();
-  }, [deliveryDate]);
 
   // Actualiza la variación actual cuando cambian los selects
   useEffect(() => {
@@ -150,7 +172,7 @@ export default function ProductDetailsClient({ product, variations }: bruh) {
   const currentPrice = currentVariation?.price || product.price || "N/A";
 
   // Agregar al carrito
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (product.type === "variable" && !currentVariation) {
       setMessage(
         "⚠️ Debes seleccionar todas las opciones antes de agregar al carrito."
@@ -163,24 +185,28 @@ export default function ProductDetailsClient({ product, variations }: bruh) {
       return false;
     }
 
-    if (deliveryDate == "") {
-      setMessage("Debe seleccionar una fecha de entrega");
-      return false;
-    }
 
     const item = currentVariation || product;
-    console.log("La fecha de entrega es", deliveryDate);
-    addToCart({
-      id: item.id,
-      product_id: product.id,
-      variation_id: currentVariation ? currentVariation.id : undefined,
-      name: product.name,
-      price: parseFloat(item.price),
-      quantity,
-      image: item.image?.src || product.images[0]?.src,
-      attributes: selectedAttrs,
-      deliveryDate: deliveryDate,
+    
+
+    // Obtiene la primera cookie
+    const cartRes1 = await fetch("/api/store/cart", { cache: "no-store" });
+    const variation = transformToWooVariation(selectedAttrs)
+
+    console.log(variation)
+
+    const addRes = await fetch("/api/store/cart/addItem", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: item.id,
+                             quantity: quantity,
+                             variation: variation,
+                          }),
     });
+
+    if (!addRes.ok) throw new Error("Error al agregar al carrito");
+
+    
 
     // setMessage("✅ Producto añadido al carrito!");
     setAddedSuccess(true);
@@ -189,9 +215,7 @@ export default function ProductDetailsClient({ product, variations }: bruh) {
 
   const handleBuyNow = () => {
     const res = handleAddToCart();
-    if (res) {
-      router.push("/cart");
-    }
+    router.push("/cart");
   };
 
   const areAttributesSelected = product.type !== "variable" || product.attributes.every((attr) => selectedAttrs[attr.name]);
@@ -199,8 +223,6 @@ export default function ProductDetailsClient({ product, variations }: bruh) {
   const dailyLimit = deliveryDate ? (getDailyRemaining(deliveryDate) ?? 0) : 0;
   const globalLimit = data?.global_remaining ?? 0;
 
-  // el número más bajo entre lo que queda hoy y lo que queda en total
-  const maxQuantityAvailable = Math.min(dailyLimit, globalLimit);
 
   return (
     <div className="mx-auto">
@@ -248,23 +270,6 @@ export default function ProductDetailsClient({ product, variations }: bruh) {
               </div>
             ))}
 
-          {/* ---------------- PASO 2: SELECCIÓN DE FECHA ---------------- */}
-          {/* Se bloquea visualmente si no se han seleccionado los atributos */}
-          <div className={`mb-4 ${!areAttributesSelected ? "opacity-50 pointer-events-none grayscale" : ""}`}>
-            <label className="block mb-2 text-lg font-medium">
-              Fecha de entrega:
-            </label>
-            <DeliveryDatePicker 
-                value={deliveryDate} 
-                onChange={(date) => {
-                    setDeliveryDate(date);
-                    setQuantity(1); // Reiniciar cantidad al cambiar fecha para evitar errores
-                }} 
-            />
-            {!areAttributesSelected && (
-              <p className="text-sm text-red-500 mt-1">Primero selecciona las opciones del producto.</p>
-            )}
-          </div>
           {/* ---------------- PASO 3: CANTIDAD ---------------- */}
           {/* Se bloquea si no hay fecha seleccionada o si el cupo es 0 */}
           <div className="mb-4">
@@ -277,24 +282,20 @@ export default function ProductDetailsClient({ product, variations }: bruh) {
                 type="number"
                 min="1"
                 // El maximo es el menor entre el diario y el global
-                max={maxQuantityAvailable}
+                max={10}
                 // Deshabilitado si no hay fecha o si no hay cupo
-                disabled={!deliveryDate || maxQuantityAvailable <= 0}
+                // disabled={ maxQuantityAvailable <= 0}
                 value={quantity}
                 onChange={(e) => {
                   const val = Number(e.target.value);
                   // Logica de limitacion estricta
-                  if (val > maxQuantityAvailable) setQuantity(maxQuantityAvailable);
-                  else if (val < 1 && val !== 0) setQuantity(1);
-                  else setQuantity(val);
+                  setQuantity(val);
                 }}
-                className={`border rounded-lg p-2 w-20 text-center ${
-                    !deliveryDate ? "bg-gray-100 text-gray-400" : ""
-                }`}
+                className={`border rounded-lg p-2 w-20 text-center`}
               />
             </div>
             {/* Mensajes de ayuda para el usuario */}
-              {deliveryDate && maxQuantityAvailable > 0 && (
+              {/* {deliveryDate && maxQuantityAvailable > 0 && (
                   <p className="text-sm text-gray-500 mt-1">
                       Máximo disponible para esta fecha: {maxQuantityAvailable}
                   </p>
@@ -303,7 +304,7 @@ export default function ProductDetailsClient({ product, variations }: bruh) {
                   <p className="text-sm text-red-500 mt-1">
                       No hay cupo disponible para esta fecha.
                   </p>
-              )}
+              )} */}
             </div>
           {/* TODO: AGREGAR SELECCION DE FECHA */}
 
@@ -315,18 +316,16 @@ export default function ProductDetailsClient({ product, variations }: bruh) {
                 {/* Botón Principal: Agregar */}
                 <button
                   onClick={handleAddToCart}
-                  disabled={!deliveryDate || maxQuantityAvailable <= 0}
+                    // disabled={}
                   className="bg-transparent border-[#E985A7] border-2 text-[#E985A7] px-6 py-3 rounded-full w-full font-bold hover:bg-[#E985A7] hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {(!deliveryDate || maxQuantityAvailable <= 0) 
-                    ? "No disponible" 
-                    : "Agregar al carrito"}
+                  Agregar al carrito
                 </button>
 
                 {/* Botón Secundario: Comprar ahora (Opcional, si quieres mantenerlo antes de agregar) */}
                 <button
                   onClick={handleBuyNow}
-                  disabled={!deliveryDate || maxQuantityAvailable <= 0}
+                  // disabled={!deliveryDate || maxQuantityAvailable <= 0}
                   className="text-gray-500 underline hover:text-[#E985A7] text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   O comprar ahora directamente
