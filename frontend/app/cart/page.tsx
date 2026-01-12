@@ -2,8 +2,6 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { setCookie } from 'cookies-next';
-import { useCart } from "../context/CartContext";
-import { useDeliveryAvailability } from "../hooks/useDeliveryAvailability";
 import CartItemRow from "../context/CartItemRow";
 import { useEffect, useState } from "react";
 import DeliveryDateSelector from "../components/DeliveryDateSelector";
@@ -13,13 +11,13 @@ export default function CartPage() {
   const [cart, setCart] = useState<any>(null);
   const [fechasDisponibles, setFechasDisponibles] = useState(null)
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
-  const [maxProductsPerDay, setMaxProductsPerDay] = useState(null)
+  const [maxProductsPerDay, setMaxProductsPerDay] = useState(999)
   const [totalQuantity, setTotalQuantity] = useState(0)
+
+  const [maxForDay, setMaxForDay] = useState(999)
 
   
 
-  // 1. LLAMAMOS AL HOOK AQUÍ (Una sola vez para toda la página)
-  const { data, getDailyRemaining, loading } = useDeliveryAvailability();
 
 
 
@@ -35,7 +33,11 @@ export default function CartPage() {
       })
       
       const fechas = await resFechas.json()
-      setFechasDisponibles(fechas)
+      const fechasModificadas = fechas.map((e: any) => ({
+        ... e,
+        display: e.display.charAt(0).toUpperCase() + e.display.slice(1)
+      }))
+      setFechasDisponibles(fechasModificadas)
       
       const resLimite = await fetch("/api/deliveryDates/getLimit", { cache: "no-store" });
       const limite = await resLimite.json()
@@ -103,12 +105,14 @@ export default function CartPage() {
 
 
 
-  const handleSelectDate = async (date: string, timestamp: string) => {
+  const handleSelectDate = async (date: string, timestamp: string, slots: number) => {
     const cookieValue = JSON.stringify({
         date: date,
         timestamp: timestamp
     });
     setCookie('delivery_selection', cookieValue, { maxAge: 60 * 60 * 24 });
+    setSelectedDate(date)
+    setMaxForDay(slots)
   }
 
   const deleteCart = async () => {
@@ -136,6 +140,7 @@ export default function CartPage() {
       ) : (
         <>
           <p>Considera que la pastelería de Mónica tiene un límite de {maxProductsPerDay} productos por día. Considera reducir el tamaño de tu carrito o solicitar un pedido personalizado al Whatsapp</p>
+          <br />
           <ul className="space-y-4">
             {cart && cart.items.map((item: any) => (
               // 2. RENDERIZAMOS LA FILA CON LA DATA DEL HOOK
@@ -150,12 +155,16 @@ export default function CartPage() {
 
           {/* Footer del carrito */}
           <div className="mt-8 border-t pt-8">
-            {fechasDisponibles && <DeliveryDateSelector
-              availableDates={fechasDisponibles}
-              cartQuantity={totalQuantity}
-              selectedDate={''}
-              onDateSelect={handleSelectDate}
-            />}
+            {fechasDisponibles && (
+              <div className="h-[30vh] overflow-y-scroll">
+                <DeliveryDateSelector
+                availableDates={fechasDisponibles}
+                cartQuantity={totalQuantity}
+                selectedDate={selectedDate}
+                onDateSelect={handleSelectDate}
+              />
+              </div>
+            )}
             <div className="flex justify-between items-start">
               <button
                 onClick={deleteCart}
@@ -174,7 +183,7 @@ export default function CartPage() {
                 {/* Podrías deshabilitarlo si loading es true */}
                 <button
                   onClick={() => router.push("/checkout")}
-                  disabled={loading}
+                  disabled={!selectedDate || totalQuantity > maxForDay}
                   className="w-[50%]  bg-[#E985A7] text-white px-6 py-3 rounded-4xl font-semibold text-lg shadow-lg hover:shadow-[#E985A7]/40 hover:bg-[#d96b8f] hover:scale-[1.02] transition-all disabled:opacity-50"
                 >
                   {"Ir al pago →"}
