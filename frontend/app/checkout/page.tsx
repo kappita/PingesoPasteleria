@@ -222,6 +222,10 @@ export default function CheckoutPage() {
 
       //clearCart();
       setMessage(`✅ Pedido #${orderData.id} creado correctamente.`);
+
+      const res = await fetch("/api/store/cart/newCart");
+
+
     }
     catch (err: any) {
       setMessage("❌ Error al procesar el pedido. Intenta de nuevo.");
