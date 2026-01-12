@@ -8,26 +8,12 @@ import Link from "next/link";
 export default function RegisterForm() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
 
   async function handleSubmit(formData: FormData) {
     const username = formData.get("username") as string;
     const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
     const firstName = formData.get("firstName") as string;
     const lastName = formData.get("lastName") as string;
-
-    // Validar la complejidad de la contraseña
-    const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}[\]|:;"'<>,.?/]).{8,}$/;
-
-    if (!passwordRegex.test(password)) {
-      setMessage(
-        "La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un símbolo."
-      );
-      setLoading(false);
-      return;
-    }
 
     setLoading(true);
     setMessage("");
@@ -39,7 +25,6 @@ export default function RegisterForm() {
         body: JSON.stringify({
           username,
           email,
-          password,
           firstName,
           lastName,
         }),
@@ -48,15 +33,13 @@ export default function RegisterForm() {
       const data = await res.json();
 
       if (res.ok) {
-        setMessage(`Cuenta creada correctamente. Bienvenido ${data.user.name}`);
-        window.location.href = "/";
+        setMessage(`Se ha enviado un correo para que establezca su contraseña`);
       } else {
         if (data.message === "fetch failed") {
           setMessage(
             "Error en el servidor. Por favor, inténtalo de nuevo más tarde."
           );
         } else {
-          console.log(data.message);
           setMessage(data.message || "Error al registrar el usuario.");
         }
       }

@@ -15,19 +15,35 @@ export async function POST(req: Request) {
     }
   `;
 
+  // Para enviar correo de restablecimiento de contraseña
+  const SEND_PASSWORD_EMAIL = gql`
+    mutation SendPasswordReset($input: SendPasswordResetEmailInput!) {
+      sendPasswordResetEmail(input: $input) {
+        user {
+          username
+        }
+      }
+    }
+  `;
+
   try {
-    const { username, email, password, firstName, lastName } = await req.json();
+    const { username, email, firstName, lastName } = await req.json();
     const variables = {
       input: {
         username,
         email,
-        password,
         firstName,
         lastName,
       },
     };
     const { registerUser } = await client.request(REGISTER_USER, variables);
     const user = registerUser.user;
+
+    const emailVariables = {
+      input: { username: user.name },
+    };
+
+    await client.request(SEND_PASSWORD_EMAIL, emailVariables);
 
     return NextResponse.json({ success: true, user });
   } catch (err: any) {
